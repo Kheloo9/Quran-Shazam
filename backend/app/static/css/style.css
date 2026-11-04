@@ -1,0 +1,904 @@
+/* Quran Shazam — royal dark-purple theme */
+:root{
+  --bg:#0f0722; --bg2:#160b31; --card:#1e1039; --card2:#170c2d;
+  --line:#3c2763; --line-soft:#2c1c4d;
+  --ink:#f7f1ff; --muted:#b7a6d8;
+  --gold:#d4af6a; --gold-soft:#e8c684;
+  --purple:#a78bfa; --purple-deep:#7c3aed;
+  --green:#2d9b68; --red:#c0565d; --amber:#d9a441; --blue:#4f9dd9;
+  --radius:14px; --font:'Inter',system-ui,sans-serif; --arabic:'Amiri Quran','Traditional Arabic',serif;
+  /* S-2 (2026-10-22): RGB triplets for the two most-abused translucent
+     colors — 46+ hardcoded rgba()s bypassed the tokens. Space-separated so
+     the modern slash-alpha form works: rgb(var(--gold-rgb)/.08). */
+  --gold-rgb:212 175 106; --purple-rgb:124 58 237;
+  /* S-3/S-5 (2026-10-22): semantic radius grammar — buttons 12px,
+     icon-chips 8px, cards 14px, pills 999px. */
+  --r-btn:12px; --r-pill:999px; --r-icon:8px; --r-card:14px;
+  /* S-4 (2026-10-22): 6-step type scale — every UI font-size maps to one
+     of these so future typography has a scale to reference. */
+  --fs-xs:.78rem; --fs-sm:.88rem; --fs-md:1rem; --fs-lg:1.15rem; --fs-xl:1.35rem; --fs-2xl:1.9rem;
+  /* R-11 (DESIGN AUDIT 2026-10-22): the old Urdu stack named "Noto Nastaliq
+     Urdu" and "Jameel Noori" — but neither font is loaded anywhere (base.html
+     loads only Amiri Quran + Inter), so every phone silently fell back to a
+     random system serif. This stack is honest: Amiri Quran IS loaded, IS a
+     Naskh-style face, and covers Urdu glyphs fully. Naskh (not Nastaliq) is
+     deliberate for mobile: Nastaliq needs huge line-height and renders tiny
+     on 360px screens; Naskh stays legible at small sizes. */
+  --urdu:'Amiri Quran','Noto Naskh Arabic','Traditional Arabic',serif;
+  --ease:cubic-bezier(.22,.8,.32,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); font-family:var(--font); line-height:1.6; min-height:100vh;
+  background:
+    radial-gradient(900px 480px at 15% -5%, rgb(var(--purple-rgb)/.22), transparent 60%),
+    radial-gradient(1100px 560px at 85% -10%, rgb(var(--gold-rgb)/.10), transparent 60%),
+    radial-gradient(1200px 700px at 50% -10%, #1c0e38, var(--bg));
+  background-attachment:fixed;
+}
+.container{max-width:1060px;margin:0 auto;padding:0 22px}
+.center{text-align:center}.small{font-size:var(--fs-sm)}.muted{color:var(--muted)}
+a{color:var(--gold);transition:color .25s var(--ease)}
+a:hover{color:var(--gold-soft)}
+::selection{background:rgba(167,139,250,.35)}
+/* S-9 (2026-10-22): explicit heading sizes — heading level now predicts
+   appearance instead of depending on which card it sits in. */
+h2{font-size:1.4rem;line-height:1.3}
+h3{font-size:var(--fs-lg);line-height:1.35}
+
+/* ---------- header / nav ---------- */
+.site-header{position:sticky;top:0;z-index:50;background:rgba(15,7,34,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px}
+.brand{font-weight:800;font-size:var(--fs-lg);color:var(--ink);text-decoration:none;transition:transform .25s var(--ease);display:inline-flex;align-items:center;gap:10px}
+.brand:hover{transform:scale(1.03);color:var(--ink)}
+.brand-logo{width:38px;height:38px;border-radius:var(--r-icon);box-shadow:0 3px 12px rgb(var(--purple-rgb)/.45);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.brand:hover .brand-logo{transform:rotate(-6deg) scale(1.06);box-shadow:0 5px 18px rgb(var(--gold-rgb)/.45)}
+.nav-links{display:flex;gap:6px;align-items:center}
+/* ---------- 2. Mobile nav: hamburger dropdown (FIX2 2026-10-19) ----------
+   FYP STUDY GUIDE: the old 62vw horizontal scroll-strip hid links (client:
+   "Duas link gayab") with no scroll affordance. A hamburger shows ALL links
+   in a tappable dropdown — the standard professional mobile pattern.
+   BUG 6 (2026-10-22): this default hide MUST stay ABOVE the max-width:700px
+   media query below. Both rules have the same specificity (0,1,0), so CSS
+   source order decides — when this line sat AFTER the media query, the
+   button stayed display:none on phones forever and mobile users lost ALL
+   navigation. */
+.nav-toggle{display:none}
+.nav-link{
+  position:relative;color:var(--muted);text-decoration:none;font-weight:600;font-size:var(--fs-md);
+  padding:9px 15px;border-radius:var(--r-pill);transition:color .25s var(--ease),background .25s var(--ease),transform .25s var(--ease);
+}
+.nav-link:hover{color:var(--ink);background:rgba(167,139,250,.10)}
+.nav-link.active{color:#1a0f2e;background:linear-gradient(135deg,var(--gold-soft),var(--gold));font-weight:700;box-shadow:0 3px 14px rgb(var(--gold-rgb)/.30)}
+.nav-cta{border:1px solid var(--line);color:var(--ink)}
+.nav-cta:not(.active){background:rgb(var(--purple-rgb)/.16)}
+.nav-cta:not(.active):hover{background:rgb(var(--purple-rgb)/.30);color:var(--ink)}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-block;padding:12px 24px;border:0;border-radius:var(--r-btn);font-weight:700;cursor:pointer;
+  font-size:var(--fs-md);text-decoration:none;font-family:var(--font);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease);
+}
+.btn-primary{background:linear-gradient(135deg,#e3b95f,#c9973f);color:#1a1206;box-shadow:0 4px 18px rgb(var(--gold-rgb)/.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgb(var(--gold-rgb)/.40);color:#1a1206}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost{background:rgba(167,139,250,.07);border:1px solid var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--purple);background:rgba(167,139,250,.15);transform:translateY(-2px);box-shadow:0 6px 20px rgb(var(--purple-rgb)/.25)}
+.btn-sm{padding:9px 16px;font-size:var(--fs-sm)}
+.btn-danger{background:#5c2b30;color:#ffd9dc;transition:background .25s var(--ease),transform .25s var(--ease)} /* S-3: was missing a hover transition, felt "dead" */
+.btn-danger:hover{background:#6e3439;transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;box-shadow:none}
+
+/* ---------- hero ---------- */
+.hero{text-align:center;padding:70px 0 34px;animation:fadeUp .8s var(--ease) both}
+.hero h1{font-size:clamp(2.2rem,5vw,3.4rem);margin:.2em 0;line-height:1.15;letter-spacing:-.01em}
+.hero h1 .gold{background:linear-gradient(120deg,var(--gold-soft),var(--gold) 60%,#b98a3e);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:var(--fs-lg);color:var(--muted);max-width:640px;margin:0 auto 26px}
+.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hero .arabic-verse{
+  font-family:var(--arabic);font-size:2.1rem;margin-bottom:10px;
+  background:linear-gradient(120deg,var(--gold-soft),var(--purple) 130%);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.visible{opacity:1;transform:none}
+.reveal[data-delay="1"]{transition-delay:.12s}.reveal[data-delay="2"]{transition-delay:.24s}
+
+/* ---------- cards ---------- */
+.card{
+  background:linear-gradient(180deg,rgba(46,26,92,.55),rgba(23,12,45,.75));
+  border:1px solid var(--line-soft);border-radius:var(--radius);padding:24px;margin:20px 0;
+  box-shadow:0 10px 34px rgba(0,0,0,.35);
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease);
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(0,0,0,.45),0 0 0 1px rgba(167,139,250,.12);border-color:var(--line)}
+.card h2{margin-top:0;display:flex;align-items:center;gap:10px}
+.card h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.step{padding:20px;border-radius:var(--r-card);background:rgba(167,139,250,.05);border:1px solid var(--line-soft);transition:transform .3s var(--ease),border-color .3s var(--ease),background .3s var(--ease)}
+.step:hover{transform:translateY(-4px);border-color:var(--purple);background:rgba(167,139,250,.10)}
+.step .num{
+  display:inline-flex;width:36px;height:36px;border-radius:50%;font-weight:800;align-items:center;justify-content:center;margin-bottom:10px;
+  background:linear-gradient(135deg,var(--purple),var(--purple-deep));color:var(--ink);box-shadow:0 4px 14px rgb(var(--purple-rgb)/.4);
+}
+
+/* ---------- pills & badges ---------- */
+.pill{display:inline-block;padding:5px 14px;border-radius:var(--r-pill);font-size:var(--fs-sm);font-weight:600;background:#241243;border:1px solid var(--line);transition:transform .2s var(--ease)}
+.pill.ok{background:rgba(45,155,104,.18);border-color:var(--green);color:#9fe0bd}
+.pill.warn{background:rgba(217,164,65,.15);border-color:var(--amber);color:#f0cd8a}
+.pill.bad{background:rgba(192,86,93,.15);border-color:var(--red);color:#f0a3a8}
+.pill.info{background:rgba(79,157,217,.15);border-color:var(--blue);color:#a9cdf0}
+
+/* ---------- verify page ---------- */
+.verify-hero{
+  text-align:center;padding:56px 26px 40px;margin:26px 0 8px;border-radius:24px;position:relative;overflow:hidden;
+  background:
+    radial-gradient(500px 260px at 50% 0%, rgb(var(--purple-rgb)/.35), transparent 65%),
+    linear-gradient(180deg,#241243,#170c2d);
+  border:1px solid var(--line);box-shadow:0 14px 44px rgba(0,0,0,.4);
+  animation:fadeUp .7s var(--ease) both;
+}
+.verify-hero::before{
+  content:"ٱقْرَأْ";position:absolute;top:-30px;right:6px;font-family:var(--arabic);font-size:9rem;opacity:.06;pointer-events:none;
+}
+.verify-hero h1{margin:.1em 0 .2em;font-size:clamp(1.9rem,4.5vw,2.7rem)}
+.verify-hero h1 .gold{background:linear-gradient(120deg,var(--gold-soft),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.verify-hero p{color:var(--muted);max-width:620px;margin:0 auto}
+.verify-steps{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.verify-steps .vstep{
+  font-size:var(--fs-sm);font-weight:600;color:var(--muted);padding:8px 16px;border-radius:var(--r-pill);
+  border:1px solid var(--line-soft);background:rgba(167,139,250,.06);
+  transition:border-color .3s var(--ease),color .3s var(--ease),background .3s var(--ease);
+}
+.verify-steps .vstep.done{color:#9fe0bd;border-color:var(--green);background:rgba(45,155,104,.12)}
+.verify-steps .vstep.current{color:#1a0f2e;background:linear-gradient(135deg,var(--gold-soft),var(--gold));border-color:transparent;font-weight:700;box-shadow:0 4px 16px rgb(var(--gold-rgb)/.35)}
+
+.dropzone{transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease)}
+/* S-8 (2026-10-22): the old .dropzone.dragover !important rule was dead — the
+   live dropzone element only carries .dropzone-pro (see verify.html), so this
+   selector never matched; .dropzone-pro.dragover below already wins naturally.
+   Removed instead of re-importanting. */
+
+/* ---------- forms ---------- */
+.field{margin:16px 0}
+label{display:block;font-weight:600;margin-bottom:8px}
+input[type=file]{
+  width:100%;padding:16px;border:2px dashed var(--line);border-radius:var(--r-btn);background:rgba(167,139,250,.04);color:var(--ink);
+  transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease);cursor:pointer;
+}
+input[type=file]:hover{border-color:var(--purple);background:rgb(var(--purple-rgb)/.08)}
+.hint{font-size:var(--fs-sm);color:var(--muted)}
+.progress{height:12px;background:#120722;border:1px solid var(--line-soft);border-radius:var(--r-pill);overflow:hidden;margin:14px 0}
+.progress>div{
+  height:100%;width:0;border-radius:var(--r-pill);
+  background:linear-gradient(90deg,var(--purple-deep),var(--purple),var(--gold));
+  background-size:200% 100%;animation:shimmer 1.6s linear infinite;
+  transition:width .45s var(--ease);
+}
+@keyframes shimmer{to{background-position:-200% 0}}
+.status{padding:14px 18px;border-radius:var(--r-card);background:rgba(167,139,250,.06);border:1px solid var(--line-soft);margin:12px 0;animation:fadeIn .4s var(--ease)}
+
+/* ---------- recorder ---------- */
+.recorder{
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:16px 18px;border-radius:var(--r-card);
+  background:rgba(0,0,0,.25);border:1px solid var(--line-soft);transition:border-color .3s var(--ease);
+}
+.recorder.recording{border-color:var(--red);box-shadow:0 0 0 1px rgba(192,86,93,.35),0 0 24px rgba(192,86,93,.15)}
+.rec-dot{width:14px;height:14px;border-radius:50%;background:#5a4a7a;display:inline-block;transition:background .3s}
+.rec-dot.live{background:#e5484d;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:var(--fs-lg);letter-spacing:.04em}
+
+/* ---------- results ---------- */
+.arabic{font-family:var(--arabic);font-size:var(--fs-2xl);line-height:2.1;text-align:right;direction:rtl}
+.translation{border-right:3px solid var(--gold);padding-right:14px;margin:12px 0;color:#e9e2cf;font-style:italic}
+.result-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.result-card{animation:fadeUp .5s var(--ease) both}
+.result-card:nth-child(2){animation-delay:.08s}.result-card:nth-child(3){animation-delay:.16s}
+.result-card:nth-child(4){animation-delay:.24s}.result-card:nth-child(5){animation-delay:.32s}
+details{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;color:var(--gold);font-weight:600}
+pre.dump{background:#0d0619;border:1px solid var(--line);border-radius:var(--r-card);padding:14px;overflow:auto;max-height:320px;font-size:var(--fs-xs)}
+
+/* ---------- footer ---------- */
+.site-footer{margin-top:60px;border-top:1px solid var(--line-soft);padding:34px 0 20px;background:rgba(0,0,0,.30)}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1.4fr;gap:24px;margin-bottom:18px}
+.footer-grid a{display:inline-block;margin:2px 0;color:var(--muted);text-decoration:none}
+.footer-grid a:hover{color:var(--gold)}
+
+/* ---------- motion preferences ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+.btn-primary.pulse{animation:none}
+  .coach-sayable.speaking,.coach-mini.speaking,.dua-actions .btn.speaking{animation:none}
+.btn-ghost.pulse{animation:none}
+}
+
+/* ---------- responsive ---------- */
+/* Sticky bottom verify bar default (desktop: hidden, page already shows the
+   button). BUG 6 (2026-10-22): same source-order trap as .nav-toggle — this
+   must precede the max-width:700px query that sets display:flex, otherwise
+   the bar never appears on phones. */
+.sticky-verify-bar{display:none}
+@media(max-width:700px){
+.footer-grid{grid-template-columns:1fr}.nav-links{gap:4px}
+  .site-header .nav{flex-wrap:nowrap;position:relative}
+  .nav-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:44px;min-height:44px;background:transparent;color:var(--ink);
+    border:1px solid var(--line-soft);border-radius:var(--r-btn);font-size:var(--fs-xl);
+    cursor:pointer;flex:0 0 auto;
+  }
+  .nav-links{
+    display:none; /* hidden until hamburger tapped */
+    position:absolute;top:calc(100% + 6px);right:12px;left:12px;
+    flex-direction:column;align-items:stretch;gap:4px;
+    background:rgba(20,10,40,.98);border:1px solid var(--line-soft);
+    border-radius:var(--r-card);padding:10px;z-index:100;
+    box-shadow:0 14px 40px rgba(0,0,0,.55);max-width:none;
+  }
+  .nav-links.open{display:flex}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-link{min-height:48px;display:flex;align-items:center;
+    padding:10px 16px;font-size:var(--fs-md);width:100%}
+  .brand{flex:0 0 auto}
+  .sticky-verify-bar{
+    display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+    z-index:9000;gap:10px;align-items:center;justify-content:center;
+    background:rgba(20,10,40,.94);backdrop-filter:blur(10px);
+    border:1px solid rgb(var(--gold-rgb)/.45);border-radius:var(--r-card);padding:10px 14px;
+    box-shadow:0 8px 30px rgba(0,0,0,.5);
+    transform:translateY(140%);transition:transform .35s var(--ease);
+  }
+  .sticky-verify-bar.show{transform:translateY(0)}
+  .sticky-verify-bar .btn{flex:1;min-height:50px;font-size:var(--fs-md)}
+  body{padding-bottom:0} /* bar is fixed; no layout shift */
+  /* V-6: while the fixed bar is visible, reserve ~84px at the page bottom so
+     it can't cover transcript actions / coach cards. verify.js toggles
+     .sticky-verify-visible on body alongside the bar's .show. */
+  body.sticky-verify-visible{padding-bottom:84px}
+}
+@media(max-width:560px){
+  .nav{padding:10px 14px;flex-wrap:wrap;row-gap:10px}
+  .brand{font-size:var(--fs-md)}
+  .nav-links{flex-wrap:wrap;gap:6px;justify-content:flex-end}
+  .nav-link{font-size:var(--fs-sm);padding:7px 11px}
+  .hero{padding:44px 0 20px}
+  .hero h1{font-size:2rem}
+  .arabic{font-size:1.6rem;line-height:2}
+  .verify-hero{padding:40px 18px 30px}
+.surah-grid{grid-template-columns:1fr}.calligraphy{font-size:2.4rem}.search-wrap{flex-direction:column}.ayah{padding:16px}
+.voice-row{flex-direction:column;align-items:stretch}.voice-row input[type=text]{min-width:0}.qa-card{padding:16px}
+  .btn{padding:13px 20px;font-size:var(--fs-md)}
+  .btn-sm{padding:11px 16px;font-size:var(--fs-md);min-height:44px}
+  .btn-primary.pulse{min-height:52px} /* the big Verify button shouts AND is tappable */
+  .recorder{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .recorder .btn{flex:1 1 30%;min-width:100px} /* Start/Pause/Stop share the row */
+  .transcript-actions .btn{flex:1 1 44%;text-align:center}
+  .fallback-actions .btn{flex:1 1 44%}
+  .arabic{font-size:1.7rem;line-height:2.3;word-spacing:.1em}
+  .ayah-text{font-size:var(--fs-xl);line-height:2.2}
+  .coach-missed{font-size:var(--fs-md);padding:5px 12px} /* missed-word chips readable */
+  .calligraphy{font-size:2.2rem}
+  .coach-card{padding:14px}
+  .coach-head{font-size:var(--fs-md)}
+  .coach-actions .btn{width:100%;margin-top:4px}
+  .coach-summary{font-size:var(--fs-md)}
+  .qari-sheet{padding:10px 14px calc(18px + env(safe-area-inset-bottom));max-height:82vh}
+  #qari-picker-name{max-width:38vw}
+  /* TEAM 4 (2026-10-22, RTL audit): search/translator snippet text inside
+     .search-hit buttons. Desktop keeps the inline flow (unchanged); on
+     phones the snippet becomes its own block with direction-correct
+     alignment — an inline RTL span inside the text-align:left button
+     wrapped into ragged, scattered lines (user screenshot: 3:120/3:186).
+     text-align:start follows the span's own dir, so one rule covers both
+     Urdu (right) and English (left) snippets. */
+  .search-hit .tr-ayah-text{display:block;margin-top:4px;text-align:start;overflow-wrap:break-word}
+}
+
+/* ---------- faster-whisper upgrade: recorder meter, live transcript, history ---------- */
+/* V-4 (2026-10-22): the small inline .level-meter was removed — the larger
+   labeled #mic-meter-wrap (inline-styled in verify.html) is the only meter. */
+.rec-dot.paused{background:#e5a54d;animation:none}
+.live-transcript{margin-top:14px;border:1px solid var(--line-soft);border-radius:var(--r-card);padding:12px 16px;background:rgba(20,10,40,.5)}
+.live-label{font-size:var(--fs-xs);color:var(--gold);margin-bottom:6px}
+.transcript-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.transcript-actions a.btn{text-decoration:none}
+.history-item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:rgba(30,16,60,.4);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:10px 14px;margin:8px 0;cursor:pointer;color:inherit;font:inherit;transition:border-color .2s,transform .2s}
+.history-item:hover{border-color:var(--gold);transform:translateY(-1px)}
+.history-label{font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- UX: pulsing verify button after recording ---------- */
+/* TEAM 1 (2026-10-22, S-1): two different animations shared the name
+   "qs-pulse" — the later (dot fade) silently replaced the earlier (button
+   glow), so the pulsing Verify button blinked like a recording dot.
+   Renamed to qs-pulse-glow (CTA glow) vs qs-pulse-dot (recording dot). */
+@keyframes qs-pulse-glow{0%{box-shadow:0 4px 18px rgb(var(--gold-rgb)/.25)}50%{box-shadow:0 4px 34px rgb(var(--gold-rgb)/.65);transform:scale(1.03)}100%{box-shadow:0 4px 18px rgb(var(--gold-rgb)/.25)}}
+.btn-primary.pulse{animation:qs-pulse-glow 1.6s ease-in-out infinite}
+/* S-12: rules moved into the reduced-motion (single block) above */
+
+/* ---------- Quran Reader ---------- */
+.calligraphy{font-size:3.2rem;color:var(--gold);opacity:.9;line-height:1.4;margin-bottom:8px;font-family:"Amiri","Scheherazade New",serif}
+.calligraphy.small{font-size:2rem}
+.lang-toggle{display:flex;gap:8px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+.lang-btn{background:rgba(30,16,60,.5);border:1px solid var(--line-soft);color:inherit;border-radius:var(--r-pill);padding:9px 20px;cursor:pointer;font:inherit;transition:all .2s}
+.lang-btn.active,.lang-btn:hover{border-color:var(--gold);color:var(--gold)}
+.search-wrap{max-width:560px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.search-wrap input[type=search]{flex:1;background:rgba(20,10,40,.6);border:1px solid var(--line-soft);border-radius:var(--r-btn);padding:12px 16px;color:inherit;font:inherit}
+.search-wrap input[type=search]:focus{outline:none;border-color:var(--gold)}
+.search-lang{display:flex;gap:10px;font-size:var(--fs-sm);white-space:nowrap}
+.search-results{max-width:640px;margin:12px auto;text-align:left;max-height:320px;overflow-y:auto}
+.search-hit{display:block;width:100%;text-align:left;background:rgba(30,16,60,.4);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:10px 14px;margin:6px 0;cursor:pointer;color:inherit;font:inherit}
+.search-hit:hover{border-color:var(--gold)}
+.filter-row{display:flex;gap:12px;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.filter-row input[type=search]{background:rgba(20,10,40,.6);border:1px solid var(--line-soft);border-radius:var(--r-btn);padding:10px 16px;color:inherit;font:inherit;min-width:240px}
+.chip-row{display:flex;gap:8px}
+.chip{background:rgba(30,16,60,.5);border:1px solid var(--line-soft);color:inherit;border-radius:var(--r-pill);padding:8px 18px;cursor:pointer;font:inherit;font-size:var(--fs-sm)}
+.chip.active,.chip:hover{border-color:var(--gold);color:var(--gold)}
+.surah-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;padding-bottom:40px}
+.surah-card{display:flex;align-items:center;gap:14px;background:rgba(30,16,60,.35);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:14px 16px;cursor:pointer;color:inherit;font:inherit;text-align:left;transition:transform .2s,border-color .2s,box-shadow .2s}
+.surah-card:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 6px 24px rgb(var(--gold-rgb)/.15)}
+.surah-num{display:flex;align-items:center;justify-content:center;min-width:44px;height:44px;border-radius:var(--r-icon);background:rgb(var(--gold-rgb)/.12);color:var(--gold);font-weight:700}
+.surah-names{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+/* FYP STUDY GUIDE (FIX2): min-width:0 lets the names column shrink inside
+   the flex card instead of forcing the card (and the grid) wider. */
+.surah-card{min-width:0}
+.surah-grid>*{min-width:0} /* grid blowout guard: tracks never exceed 1fr */
+/* TEAM 1 (2026-10-22, R-1): was rendering in system sans — Uthmani
+   diacritics (harakat, shadda, maddah) need a real Quran font. */
+.arabic-name{font-family:var(--arabic);font-size:1.25rem;color:var(--gold)}
+.surah-meta{font-size:var(--fs-xs);color:var(--muted)}
+.reader{max-width:820px;margin:0 auto;padding-bottom:60px}
+.reader-head{text-align:center;margin:20px 0 8px}
+.reader-controls{display:flex;justify-content:space-between;align-items:center;margin:16px 0;flex-wrap:wrap;gap:10px}
+/* R-3: ayah-jump widget — number input + Go, inline in reader-controls. */
+.ayah-jump{display:flex;align-items:center;gap:8px;font-size:var(--fs-md)}
+.ayah-jump label{color:var(--gold);font-weight:600;white-space:nowrap}
+.ayah-jump input{width:84px;background:rgba(20,10,40,.6);border:1px solid var(--line-soft);border-radius:var(--r-icon);padding:8px 10px;color:inherit;font:inherit;min-height:44px}
+.ayah-jump input:focus{outline:none;border-color:var(--gold)}
+/* R-4: thin full-surah playback progress line under the audio controls. */
+.surah-progress{margin:-4px 0 14px;padding:0 4px}
+.surah-progress-text{margin:0 0 6px;font-size:var(--fs-xs);color:var(--muted)}
+.surah-progress-track{height:4px;border-radius:2px;background:rgb(var(--gold-rgb)/.15);overflow:hidden}
+.surah-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-soft));border-radius:2px;transition:width .4s var(--ease)}
+/* R-5: Arabic verse on each search hit — RTL, above the translation. */
+.search-arabic{display:block;font-size:1.25rem;line-height:2;color:#f5ecd7;margin:8px 0 6px;font-family:var(--urdu)}
+/* R-8: tiny muted language label in "both" translation mode. */
+.tr-label{display:inline-block;font-size:var(--fs-xs);color:var(--muted);border:1px solid var(--line-soft);border-radius:var(--r-pill);padding:1px 10px;margin:0 8px 0 0;vertical-align:middle;letter-spacing:.04em}
+.ayah-ur .tr-label{margin:0 0 0 8px}
+.toggle{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:var(--fs-md)}
+.font-size{display:flex;gap:6px}
+.font-size button{background:rgba(30,16,60,.5);border:1px solid var(--line-soft);color:inherit;border-radius:var(--r-icon);padding:6px 12px;cursor:pointer;font:inherit}
+.font-size button:hover{border-color:var(--gold)}
+.ayah{background:rgba(30,16,60,.3);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:22px;margin:14px 0;transition:border-color .2s}
+.ayah.highlight{border-color:var(--gold);box-shadow:0 0 24px rgb(var(--gold-rgb)/.25)}
+/* TEAM 1 (2026-10-22, R-1): the loaded "Amiri Quran" font was never
+   applied here — ayah Arabic rendered in Inter/system sans. */
+.ayah-arabic{font-family:var(--arabic);line-height:2.2;margin-bottom:12px;color:#f5ecd7;
+  /* TEAM 4 (2026-10-22, RTL audit): explicit in CSS, not only via the
+     dir="rtl" HTML attribute quran.js sets — no visual change (the attribute
+     already produced exactly this), but the stylesheet is now correct even
+     if a future renderer forgets the attribute. */
+  direction:rtl;text-align:right}
+.ayah-num{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border:1.5px solid var(--gold);border-radius:50%;color:var(--gold);font-size:var(--fs-sm);margin-right:8px;vertical-align:middle}
+.ayah-en{line-height:1.75;color:#d8cdb4;margin:10px 0;font-size:calc(var(--fs-md) * var(--fs-scale,1))}
+/* R-8: tiny muted language tag shown in "both" mode. R-9: font-size scales
+   with --fs-scale (set by A+/A− in quran.js). R-11: honest Naskh-first stack. */
+.ayah-ur{direction:rtl;text-align:right;line-height:2;color:#d8cdb4;margin:10px 0;font-size:calc(var(--fs-md) * var(--fs-scale,1));font-family:var(--urdu)}
+.tafseer{margin-top:12px;border-top:1px dashed var(--line-soft);padding-top:10px}
+.tafseer summary{cursor:pointer;color:var(--gold);font-weight:600;font-size:var(--fs-sm)}
+.tafseer p{line-height:1.8;color:#cfc4a8;font-size:var(--fs-sm);margin-top:8px}
+.reader-nav{display:flex;justify-content:space-between;margin-top:28px}
+/* S-12: rules moved into the max-width:560px (single block) above */
+/* FYP STUDY GUIDE (FIX2 2026-10-19): single column on phones. The old
+   rule forced 2 columns at <=560px; on a 360px phone each track was ~130px
+   while a surah card's content needs ~200px, so the grid blew out past the
+   viewport (client screenshots: cards cut at the right edge). One column
+   can never overflow. Tablets (>=561px) keep the auto-fill multi-column. */
+
+/* ---------- homepage polish: calligraphy divider + quran promo ---------- */
+.calligraphy-divider{text-align:center;margin:36px 0;color:var(--gold);opacity:.5;font-size:1.2rem;letter-spacing:12px}
+.quran-promo{text-align:center;background:linear-gradient(135deg,rgba(60,25,110,.5),rgba(30,12,60,.5));border:1px solid rgb(var(--gold-rgb)/.3)}
+.quran-promo-inner{max-width:560px;margin:0 auto;padding:12px}
+.quran-promo .btn{margin-top:12px}
+
+/* ---------- file upload UX: info + drag feedback ---------- */
+.file-info{display:none;margin-top:10px;padding:10px 14px;background:rgba(30,16,60,.4);border:1px solid var(--line-soft);border-radius:var(--r-card);font-size:var(--fs-sm)}
+.file-icon{margin-right:6px}
+.dragging{outline:2px dashed var(--gold);outline-offset:-8px;border-radius:var(--r-card)}
+.dragging .dropzone{border-color:var(--gold)}
+
+/* ---------- tafseer: clean button + panel ---------- */
+.tafseer-btn{display:inline-block;margin-top:10px;background:rgb(var(--gold-rgb)/.1);border:1px solid rgb(var(--gold-rgb)/.4);color:var(--gold);border-radius:var(--r-pill);padding:7px 18px;cursor:pointer;font:inherit;font-size:var(--fs-sm);transition:all .2s}
+.tafseer-btn:hover{background:rgb(var(--gold-rgb)/.2)}
+.tafseer-btn.open{background:rgb(var(--gold-rgb)/.2)}
+.tafseer-panel{margin-top:12px;border:1px solid rgb(var(--gold-rgb)/.25);border-radius:var(--r-card);padding:14px 16px;background:rgba(20,10,35,.5)}
+.tafseer-tabs{display:flex;gap:8px;margin-bottom:10px}
+.tafseer-tab{background:transparent;border:1px solid var(--line-soft);color:inherit;border-radius:var(--r-pill);padding:5px 16px;cursor:pointer;font:inherit;font-size:var(--fs-sm)}
+.tafseer-tab.active{border-color:var(--gold);color:var(--gold)}
+.tafseer-body p{line-height:1.85;color:#d8cdb4;font-size:calc(var(--fs-md) * var(--fs-scale,1));margin:0}
+.tafseer-body[data-tbody="ur"] p{font-family:var(--urdu);line-height:2.1}
+.tafseer-src{margin-top:10px;font-size:var(--fs-xs);color:var(--muted);font-style:italic;opacity:.8} /* S-8: triple !important dropped — .tafseer-src (0,1,0) already beats any element selector naturally */
+
+/* ---------- voice Q&A ---------- */
+.voice-qa{margin:24px 0}
+.voice-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
+.voice-row input[type=text]{flex:1;min-width:200px;background:rgba(20,10,40,.6);border:1px solid var(--line-soft);border-radius:var(--r-btn);padding:11px 16px;color:inherit;font:inherit}
+.voice-row input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgb(var(--gold-rgb)/.15)}
+#voice-btn{position:relative;overflow:hidden}
+#voice-btn.listening{background:#a33;border-color:#a33}
+#voice-btn .pulse-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#fff;margin-right:6px;animation:qs-pulse-dot 1s infinite}
+@keyframes qs-pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.qa-chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+.qa-chip{display:inline-flex;align-items:center;min-height:44px;background:rgb(var(--gold-rgb)/.08);border:1px solid rgb(var(--gold-rgb)/.3);color:var(--gold-soft);border-radius:var(--r-pill);padding:6px 14px;font-size:var(--fs-xs);cursor:pointer;transition:all .2s;font-family:inherit} /* A-9: 44px min-height — was ~30px, mis-taps fired TTS in the wrong language */
+.qa-chip:hover{background:rgb(var(--gold-rgb)/.18);transform:translateY(-1px)}
+.qa-answer{margin-top:16px}
+.qa-q{font-weight:600;color:var(--gold);margin-bottom:12px;font-size:var(--fs-md)}
+.qa-card{background:linear-gradient(135deg,rgba(30,16,60,.5),rgba(20,10,40,.5));border:1px solid rgb(var(--gold-rgb)/.2);border-radius:var(--r-card);padding:20px;opacity:0;transform:translateY(12px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.qa-card.qa-in{opacity:1;transform:none}
+.qa-card h3{margin:0 0 12px;color:var(--gold-soft)} /* S-9: size now comes from the base h3 rule (1.15rem — identical) */
+.qa-card .arabic{font-size:1.7rem;line-height:2.2;margin:12px 0}
+.qa-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.qa-hit{background:rgba(30,16,60,.35);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:14px;margin:10px 0;transition:border-color .2s}
+.qa-hit:hover{border-color:rgb(var(--gold-rgb)/.35)}
+.qa-hit .arabic.small{font-size:1.2rem}
+.qa-hit strong{color:var(--gold)}
+/* TEAM 4 (2026-10-22, RTL audit): the translation <p> is Urdu when the
+   backend falls back to Urdu search — voice_qa.js then sets dir="rtl" on it.
+   This rule only fires in that case (English hits are untouched on every
+   viewport): right-align so wrapped Urdu lines don't go ragged. */
+.qa-hit .muted[dir="rtl"]{text-align:right}
+.qa-loading{display:flex;align-items:center;gap:12px;padding:20px;color:var(--muted)}
+.qa-spinner{width:22px;height:22px;border:3px solid rgb(var(--gold-rgb)/.2);border-top-color:var(--gold);border-radius:50%;animation:qs-spin .8s linear infinite}
+@keyframes qs-spin{to{transform:rotate(360deg)}}
+.qa-error{border-color:rgba(192,86,93,.4)}
+.qa-suggest{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.qa-history{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-soft)}
+.qa-hist-title{font-size:var(--fs-xs);color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em}
+.qa-hist-item{display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--muted);font-size:var(--fs-sm);padding:6px 0;cursor:pointer;font-family:inherit}
+.qa-hist-item:hover{color:var(--gold-soft)}
+.qa-hist-item::before{content:"↩ ";opacity:.6}
+/* S-12: rules moved into the max-width:560px (single block) above */
+
+/* ---------- v7: audio, bookmark, hifz, transliteration ---------- */
+.ayah-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ayah-num{background:rgb(var(--gold-rgb)/.15);border:1px solid rgb(var(--gold-rgb)/.4);color:var(--gold);border-radius:50%;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:var(--fs-sm)}
+.ayah-btns{display:flex;gap:6px}
+/* S-3 (2026-10-22): single .icon-btn definition — the mobile-first touch-target
+   override further down was a duplicate block; merged here (44px min, icon radius). */
+.icon-btn{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;background:rgba(255,255,255,.06);border:1px solid var(--line-soft);border-radius:var(--r-icon);cursor:pointer;font-size:var(--fs-md);transition:all .2s}
+.icon-btn:hover{background:rgb(var(--gold-rgb)/.15);border-color:var(--gold)}
+.bookmark-btn.active{background:rgb(var(--gold-rgb)/.25);border-color:var(--gold)}
+.ayah-translit{color:#b9a8d0;font-size:var(--fs-sm);font-style:italic;margin:8px 0}
+.hifz-hidden{filter:blur(12px);user-select:none;pointer-events:none}
+.hifz-reveal{background:rgb(var(--gold-rgb)/.12);border:1px dashed rgb(var(--gold-rgb)/.5);color:var(--gold);border-radius:var(--r-btn);padding:10px 20px;cursor:pointer;font:inherit;margin:10px 0;display:block;width:100%}
+.hifz-reveal:hover{background:rgb(var(--gold-rgb)/.2)}
+
+/* bookmarks + progress sections */
+.bookmark-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:12px}
+.bookmark-card{background:rgba(30,16,60,.4);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:12px;cursor:pointer;text-align:center;transition:all .2s}
+.bookmark-card:hover{border-color:var(--gold)}
+.progress-bar{height:10px;background:rgba(255,255,255,.08);border-radius:var(--r-pill);overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),#f0d080);border-radius:var(--r-pill);transition:width .5s}
+
+/* ---------- verify improvements ---------- */
+.tips-box{margin:12px 0;border:1px solid var(--line-soft);border-radius:var(--r-card);padding:10px 16px;background:rgba(30,16,60,.3)}
+.tips-box summary{cursor:pointer;color:var(--gold);font-weight:600}
+.tips-box ul{margin:10px 0 4px;padding-left:20px;line-height:1.9;color:#d8cdb4}
+.tips-box li{margin-bottom:4px}
+
+/* ---------- professional dropzone ---------- */
+.dropzone-pro{border:2px dashed rgb(var(--gold-rgb)/.35);border-radius:var(--r-card);padding:28px 20px;text-align:center;background:rgba(20,10,40,.4);transition:all .25s;cursor:pointer;position:relative}
+.dropzone-pro:hover{border-color:var(--gold);background:rgb(var(--gold-rgb)/.06)}
+.dropzone-pro.dragover{border-color:var(--gold);background:rgb(var(--gold-rgb)/.12);transform:scale(1.02);box-shadow:0 0 30px rgb(var(--gold-rgb)/.2)}
+.dz-icon{font-size:3rem;margin-bottom:10px}
+.dz-title{font-size:var(--fs-lg);font-weight:600;margin-bottom:4px}
+.dz-sub{color:#b9a8d0;margin-bottom:14px}
+.dz-browse{color:var(--gold);text-decoration:underline;cursor:pointer}
+.dz-formats{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+.fmt-badge{background:rgb(var(--gold-rgb)/.12);border:1px solid rgb(var(--gold-rgb)/.4);color:var(--gold);border-radius:var(--r-icon);padding:3px 10px;font-size:var(--fs-xs);font-weight:600}
+.dz-limit{font-size:var(--fs-xs);color:var(--muted)} /* S-10: #8a7ba0 was 4.81:1 — var(--muted) restores margin */
+/* file card */
+.dz-filecard{display:flex;gap:14px;align-items:flex-start;text-align:left;background:rgba(30,16,60,.5);border:1px solid rgb(var(--gold-rgb)/.3);border-radius:var(--r-card);padding:16px;position:relative}
+.dz-file-icon{font-size:2.5rem}
+.dz-file-info{flex:1;min-width:0}
+.dz-file-name{font-weight:600;word-break:break-all;margin-bottom:4px}
+.dz-file-meta{font-size:var(--fs-sm);color:#b9a8d0;margin-bottom:8px}
+.dz-wave{margin:8px 0}
+.dz-wave canvas{width:100%;height:60px;background:rgba(0,0,0,.3);border-radius:var(--r-icon)}
+.dz-remove{position:absolute;top:10px;right:10px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#ef4444;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:var(--fs-md)}
+.dz-remove:hover{background:rgba(239,68,68,.3)}
+.dz-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);color:#fca5a5;border-radius:var(--r-card);padding:12px;margin-top:12px}
+
+/* ---- Audio controls: Qari selector + full surah playback (added 2026-10-18) ---- */
+.audio-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0;padding:12px 16px;background:rgba(30,16,60,.4);border:1px solid rgb(var(--gold-rgb)/.25);border-radius:var(--r-card)}
+#play-surah-btn.playing{background:#7c2d12;border-color:#ea580c}
+.qari-label{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:#b9a8d0}
+#qari-select{background:#1e1039;color:var(--ink);border:1px solid rgb(var(--gold-rgb)/.4);border-radius:var(--r-icon);padding:8px 12px;font-size:var(--fs-sm);max-width:280px}
+#qari-select:focus{outline:none;border-color:var(--gold)}
+.ayah-card.now-playing{border-color:var(--gold);box-shadow:0 0 20px rgb(var(--gold-rgb)/.3);background:rgb(var(--gold-rgb)/.06)}
+
+/* ---- Custom Qari picker (bottom-sheet, unique design — Issue 3 fix) ---- */
+.qari-picker-btn{display:flex;align-items:center;gap:10px;background:rgba(30,16,60,.55);border:1px solid rgb(var(--gold-rgb)/.4);border-radius:var(--r-btn);padding:8px 14px;color:var(--ink);cursor:pointer;font-size:var(--fs-sm);transition:border-color .2s,transform .15s}
+.qari-picker-btn:hover{border-color:var(--gold);transform:translateY(-1px)}
+.qari-picker-btn:active{transform:translateY(0)}
+.qari-picker-icon{font-size:1.25rem}
+.qari-picker-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.25}
+.qari-picker-label{font-size:var(--fs-xs);color:#b9a8d0;text-transform:uppercase;letter-spacing:.06em}
+#qari-picker-name{font-weight:600;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qari-picker-chev{color:var(--gold);font-size:var(--fs-sm)}
+.qari-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;backdrop-filter:blur(2px)}
+.qari-sheet{position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#1e1039;border-top:1px solid rgb(var(--gold-rgb)/.4);border-radius:20px 20px 0 0;padding:12px 18px 22px;max-height:78vh;overflow-y:auto;animation:qariSheetUp .28s ease-out}
+@keyframes qariSheetUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.qari-sheet-handle{width:44px;height:5px;border-radius:3px;background:rgb(var(--gold-rgb)/.5);margin:2px auto 12px}
+.qari-sheet-title{margin:0 0 2px;text-align:center}
+.qari-sheet-sub{text-align:center;margin:0 0 14px;font-size:var(--fs-sm)}
+.qari-cards{display:flex;flex-direction:column;gap:10px}
+.qari-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:rgba(46,26,86,.6);border:1px solid rgb(var(--gold-rgb)/.22);border-radius:var(--r-card);padding:12px 14px;color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s}
+.qari-card:hover{border-color:rgb(var(--gold-rgb)/.6)}
+.qari-card.selected{border-color:var(--gold);background:rgb(var(--gold-rgb)/.12);box-shadow:0 0 18px rgb(var(--gold-rgb)/.18)}
+.qari-card-avatar{font-size:1.6rem;flex-shrink:0}
+.qari-card-info{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.qari-card-info strong{font-size:var(--fs-md)}
+.qari-card-style{font-size:var(--fs-xs)}
+.qari-card-check{color:var(--gold);font-size:var(--fs-xl);font-weight:700;flex-shrink:0;min-width:1.4em;text-align:center}
+.qari-sheet-close{width:100%;margin-top:14px}
+
+/* ---- Word translator widget (Issue 5 + 6) ---- */
+.translator-block{margin-top:18px;padding-top:16px;border-top:1px solid rgb(var(--gold-rgb)/.2)}
+.translator-block h3{margin:0 0 4px}
+.translator-dir{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+/* FYP STUDY GUIDE (FIX2): wrap so the two direction buttons stack instead
+   of overflowing on narrow phones. */
+.tr-dir-btn{background:rgba(30,16,60,.5);border:1px solid rgb(var(--gold-rgb)/.3);color:#cfc3e6;border-radius:var(--r-btn);padding:8px 16px;cursor:pointer;font-size:var(--fs-sm)}
+.tr-dir-btn.active{background:rgb(var(--gold-rgb)/.18);border-color:var(--gold);color:var(--ink);font-weight:600}
+.tr-result{margin-top:12px}
+.tr-cands{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.tr-note{width:100%;margin:0 0 2px}
+.tr-cand{display:inline-flex;align-items:center;gap:6px;background:rgb(var(--gold-rgb)/.14);border:1px solid rgb(var(--gold-rgb)/.45);border-radius:var(--r-btn);padding:8px 12px;font-size:var(--fs-md);font-weight:600}
+.tr-copy{background:none;border:none;cursor:pointer;font-size:var(--fs-sm);opacity:.75}
+.tr-copy:hover{opacity:1}
+.tr-ayat-head{margin:10px 0 6px}
+.tr-ayats{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto}
+
+/* ---- Fallback banner: graceful degradation when transcription is poor (TEAM 10) ---- */
+.fallback-banner{margin:0 0 16px;padding:14px 16px;border-radius:var(--r-card);
+  background:rgba(217,164,65,.08);border:1px solid var(--amber);border-left:6px solid var(--amber)}
+.fallback-title{font-weight:700;font-size:var(--fs-md)}
+.fallback-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+/* Audio quality warning chip (noise gate): amber note under the transcript */
+.warn-chip{margin:6px 0;padding:10px 14px;border-radius:var(--r-card);font-size:var(--fs-sm);
+  background:rgba(217,164,65,.10);border:1px solid var(--amber);border-left:5px solid var(--amber)}
+/* ---- 🎯 Quran Coach: per-ayah coaching feedback (Shazam + Coach) ---- */
+.coach-summary{margin:0 0 14px;padding:14px 16px;border-radius:var(--r-card);font-weight:600;
+  background:linear-gradient(135deg,rgba(167,139,250,.14),rgb(var(--gold-rgb)/.10));
+  border:1px solid var(--purple);border-left:6px solid var(--purple)}
+.coach-card{margin:10px 0;padding:12px 14px;border-radius:var(--r-card);
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12)}
+.coach-card.coach-perfect{border-left:5px solid var(--green)}
+.coach-card.coach-needs_work{border-left:5px solid var(--amber)}
+.coach-card.coach-missing{border-left:5px solid var(--red)}
+.coach-head{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:6px}
+/* P3 (2026-10-21): ayah Arabic text under every Coach card head. Larger
+   Arabic font, gentle divider — same dark-theme card background as the
+   rest of the card; no new colors. */
+.coach-ayah{font-size:var(--fs-xl);line-height:2;margin:6px 0 8px;padding:6px 4px 10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  /* TEAM 4 (2026-10-22, RTL audit): same rationale as .ayah-arabic above —
+     explicit RTL in CSS; visually identical to what dir="rtl" already gave. */
+  direction:rtl;text-align:right}
+.coach-msg{margin:4px 0}
+.coach-missed{display:inline-block;margin:6px 4px 0 0;padding:3px 10px;border-radius:var(--r-pill);
+  font-size:var(--fs-sm);background:rgba(217,164,65,.14);border:1px solid var(--amber)}
+.coach-actions{margin-top:10px}
+/* TEAM 2 (P2): word chips are tappable — hear the correct pronunciation.
+   The glyph stays small and the chips keep their existing look (mobile-first). */
+.coach-sayable{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.coach-say{font-size:var(--fs-xs);margin-inline-start:5px;opacity:.75;vertical-align:1px}
+.coach-sayable:active .coach-say{opacity:1;transform:scale(1.15)}
+/* C-5 (2026-10-22): which word is being spoken — gold outline + soft pulse
+   on the active chip/button so the user can see it (and knows tapping it
+   again stops it). Uniquely-named keyframe so it never collides with the
+   qs-pulse family Team 1 is deduplicating. JS clears .speaking on end/error. */
+.coach-sayable.speaking,.coach-mini.speaking,.dua-actions .btn.speaking{
+  outline:2px solid var(--gold);outline-offset:2px;border-radius:var(--r-pill);
+  animation:qs-speaking-pulse 1.2s ease-in-out infinite}
+@keyframes qs-speaking-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgb(var(--gold-rgb)/.55)}
+  50%{box-shadow:0 0 0 6px rgb(var(--gold-rgb)/0)}}
+/* S-12: rules moved into the reduced-motion (single block) above */
+/* C-12 (2026-10-22): dua card action row — same layout grammar as
+   .qa-actions on the Q&A page so the two pages feel like one app. */
+.dua-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.dua-actions .btn{min-height:44px}
+/* Stage 4-lite: substituted-word chips (expected → heard). Amber = attention,
+   but softer than missed (red family) — a mispronunciation is a smaller
+   issue than a skipped word. */
+.coach-sub{margin-top:6px}
+.coach-subbed{display:inline-block;margin:6px 4px 0 0;padding:3px 10px;border-radius:var(--r-pill);
+  font-size:var(--fs-sm);background:rgba(217,164,65,.08);border:1px dashed var(--amber)}
+.coach-arrow{opacity:.7;padding:0 2px}
+/* ADR-0010: "uncertain" chips — the AI doubts its own hearing. Blue/grey
+   (information), never red/amber (mistake). The "?" marks doubt. */
+.coach-uncertain{display:inline-block;margin:6px 4px 0 0;padding:3px 10px;border-radius:var(--r-pill);
+  font-size:var(--fs-sm);background:rgba(96,165,250,.10);border:1px dashed #60a5fa;color:inherit}
+.coach-q{opacity:.8;font-weight:700}
+/* pulse works on ghost buttons too, so the Edit button shouts when it matters */
+.btn-ghost.pulse{animation:qs-pulse-glow 1.6s ease-in-out infinite;border-color:var(--gold)}
+/* S-12: rules moved into the reduced-motion (single block) above */
+
+/* =====================================================================
+   MOBILE-FIRST & RESPONSIVE POLISH — 2026-10-19 (professional IT team)
+   ---------------------------------------------------------------------
+   FYP STUDY GUIDE: Mobile-first means we design for the smallest screen
+   FIRST, then add enhancements for bigger screens. ~90% of our users
+   are on phones, so the phone experience is the REAL product — desktop
+   is the bonus. Rules enforced here:
+     1. Every tappable control is at least 44x44px (Apple/Google guideline)
+     2. No horizontal scrolling at 360px width
+     3. Arabic stays readable (bigger line-height, no clipping)
+     4. Thumb-friendly: primary actions reachable without stretching
+   ===================================================================== */
+
+/* ---------- 1. Touch targets: minimum 44x44px everywhere ---------- */
+/* S-3 (2026-10-22): duplicate .icon-btn block removed — merged into the single
+   definition above. */
+.qari-picker-btn{min-height:48px;padding:10px 16px}
+.coach-actions .btn{min-height:44px}
+.dz-remove{min-width:44px;min-height:44px}
+
+/* ---------- 2. Mobile nav: hamburger dropdown (FIX2 2026-10-19) ----------
+   Default .nav-toggle{display:none} now lives in the base header/nav section
+   above (see BUG 6 note there) — it must precede the max-width:700px query. */
+/* S-12: rules moved into the max-width:700px (single block) above */
+
+/* ---------- 3. Buttons: full-width primary actions on small phones ---------- */
+/* S-12: rules moved into the max-width:560px (single block) above */
+
+/* ---------- 4. Sticky bottom verify bar on mobile (thumb-friendly) ----------
+   Default .sticky-verify-bar{display:none} moved above the responsive section
+   (see BUG 6 note) — it must precede the max-width:700px query.
+   S-12: rules moved into the max-width:700px (single block) above. */
+
+/* ---------- 5. Arabic readability on small screens ---------- */
+/* S-12: rules moved into the max-width:560px (single block) above */
+
+/* ---------- 6. Kill horizontal overflow everywhere ---------- */
+img,canvas,audio,video{max-width:100%}
+.dz-wave canvas{width:100%!important;height:auto}
+.search-wrap input[type=search]{min-width:0} /* flex item may overflow otherwise */
+.card,.ayah,.qa-card,.coach-card{overflow-wrap:break-word}
+pre,code{white-space:pre-wrap;word-break:break-word}
+
+/* ---------- 7. Coach cards: stack nicely on phones ---------- */
+/* S-12: rules moved into the max-width:560px (single block) above */
+
+/* ---------- 8. Qari bottom-sheet: phone-perfect ---------- */
+/* S-12: rules moved into the max-width:560px (single block) above */
+
+/* ---------- 9. Desktop enhancements (the bonus, not the baseline) ---------- */
+@media(min-width:1200px){
+  .container{max-width:1180px}
+  .surah-grid{grid-template-columns:repeat(3,1fr)}
+  .coach-card{display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:center}
+  /* C-16 (2026-10-22): grid auto-placement was putting the 8 card children
+     into a 2-column checkerboard (long Arabic .coach-ayah text landed in the
+     `auto` column and starved the 1fr column). The retry button itself sits
+     in the `auto` track so it was never width-squeezed, and at 900–1199px the
+     grid rule doesn't apply (cards stack normally) — but the checkerboard
+     is still a broken layout. Pin everything except .coach-actions to the
+     1fr column, and the actions (retry) to column 2 spanning the card's full
+     height — the button can never be squeezed by content now. */
+  .coach-card > :not(.coach-actions){grid-column:1;min-width:0}
+  .coach-card > .coach-actions{grid-column:2;grid-row:1/span 12;align-self:start;
+    margin-top:0;justify-self:end}
+}
+@media(min-width:900px) and (max-width:1199px){
+  .surah-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ---------- 10. Notched phones: respect the safe area ---------- */
+@supports(padding:env(safe-area-inset-bottom)){
+  .site-header{padding-top:env(safe-area-inset-top)}
+}
+
+/* ---------- A-6 / A-11: keyboard access (DESIGN AUDIT 2026-10-22) ----------
+   FYP STUDY GUIDE: :focus-visible matches keyboard focus only (not mouse
+   clicks), so mouse users see no ring while Tab users get a clear 2px gold
+   ring. This block sits AFTER every :focus{outline:none} rule above, so on
+   equal specificity it wins the cascade for keyboard users. The skip link
+   is visually hidden until focused — keyboard users jump past the nav
+   straight into <main>. */
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+/* TEAM 4 (2026-10-22): the generic :focus-visible above is (0,1,0), but the
+   input :focus{outline:none} rules earlier (:312,:342,:406,:492) are
+   (0,2,1)–(1,1,1) — order only wins specificity ties, so the ring was
+   silently losing on search/jump/voice/qari inputs. Restate it at equal-or-
+   higher specificity so keyboard focus on inputs gets the ring too. */
+.search-wrap input[type=search]:focus-visible,
+.ayah-jump input:focus-visible,
+.voice-row input[type=text]:focus-visible,
+#qari-select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.skip-link{position:absolute;left:-9999px;top:0;z-index:10000;background:var(--gold);color:#1a0f2e;font-weight:700;padding:10px 16px;border-radius:0 0 var(--r-btn) 0;text-decoration:none}
+.skip-link:focus-visible{left:0;outline-offset:-2px}
+
+/* =====================================================================
+   FIX2 — 2026-10-19 emergency mobile repair (client screenshots showed
+   cards cut off at the right edge on his phone even after the first
+   mobile pass). Root causes found by audit:
+     1. .surah-grid forced 2 columns at <=560px -> grid blowout (fixed above
+        to 1 column; flex/grid children got min-width:0 guards)
+     2. quran.html nested .container inside <main class="container">
+        (double 22px padding = 44px lost on 360px phones)
+     3. Mobile nav was a 62vw scroll-strip with no scroll affordance, so
+        Home/Verify/Quran/Duas links looked "gone" (client: "Duas khatam")
+        -> replaced with a hamburger dropdown (see section 2 above)
+   This block is the last-resort safety net: nothing may push the page
+   wider than the viewport, ever.
+   ===================================================================== */
+html, body{overflow-x:clip;max-width:100%}
+body{position:relative}
+main.container{min-width:0} /* flex/grid blowout guard on the content column */
+.quran-page{min-width:0}
+/* every card and grid child can shrink; long words (URLs, Arabic) break */
+.card,.ayah,.qa-card,.coach-card,.surah-card,.dua-card,.step,.pill,
+.grid>*,.surah-grid>*,.bookmark-grid>*{min-width:0;max-width:100%}
+img,video,canvas,audio,iframe{max-width:100%}
+/* S-7 (2026-10-22): table{display:block} removed — no <table> exists in any template. */
+
+/* WORD PRACTICE buttons (2026-10-22): 👂 hear the (mis)heard word, 🎙️ record
+   yourself saying the correct word. TEAM 1 (2026-10-22, C-2/A-1): bumped
+   from ~23px to the project's own 44px touch-target rule — glyph stays small,
+   centered via flex. */
+.coach-mini {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px; margin: 2px 2px; padding: 4px 8px;
+  font-size:var(--fs-md); line-height: 1; border-radius:var(--r-pill);
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+  cursor: pointer; vertical-align: middle;
+}
+.coach-mini:active { transform: scale(.92); }
+.coach-practice-res {
+  /* TEAM 1 (2026-10-22, C-14): was a tiny 13px inline tail; now a full-width
+     line with real words ("✅ Sahi!", not emoji-only) below the chips. */
+  display: block; width: 100%; margin: 6px 0 2px;
+  font-size:var(--fs-md); opacity: .95; text-align: left;
+}
+/* TEAM 1 (2026-10-22, C-1): group headings — users must see which pills are
+   missed vs mispronounced vs AI-unsure. */
+.coach-group-label{font-size:var(--fs-xs);font-weight:700;letter-spacing:.02em;color:var(--muted);
+  margin:10px 0 2px;text-transform:uppercase}
+/* TEAM 1 (2026-10-22, C-2): one-line legend shown on first Coach render —
+   tooltips never appear on phones. */
+.coach-legend{font-size:var(--fs-sm);color:var(--muted);background:rgb(var(--gold-rgb)/.06);
+  border:1px dashed rgb(var(--gold-rgb)/.35);border-radius:var(--r-card);padding:8px 10px;margin:10px 0}
+/* TEAM 1 (2026-10-22, A-2): word chips are now real <button>s (keyboard/SR
+   reachable). Reset button chrome so they keep the pill look. */
+.coach-missed,.coach-subbed,.coach-uncertain{font-family:inherit;font-size:var(--fs-sm);color:inherit;text-align:center}
+
+/* =====================================================================
+   IMPECCABLE-STYLE POLISH PASS — 2026-11-04 (real project)
+   ---------------------------------------------------------------------
+   Applied to the real project ~/workspace/quran-shazam/ on his order
+   2026-11-04 (first proven on the polish copy). Append-only: no existing rule
+   above was edited, moved or deleted, so the file's known source-order
+   traps (.nav-toggle, .sticky-verify-bar) are unaffected.
+   Rules: existing dark/gold palette only (no new colors, no recolour);
+   no content or wording changes (Quran text + scholars' translations /
+   tafseer untouched); RTL and Arabic-script rules untouched (direction
+   and alignment never altered); CSS only, no JS/HTML/template changes;
+   no feature added, removed or reordered. Mobile (<=560px) rules are
+   deliberately NOT overridden: every size/spacing change below is either
+   viewport-neutral or scoped to min-width:561px.
+   ===================================================================== */
+
+/* A. Anchor offset: the sticky header (~66px) used to cover jumped-to
+   content (ayah jump, in-page links) under smooth scrolling. */
+html{scroll-padding-top:84px}
+
+/* B. Section rhythm: cards breathe a little more; grids get airier gaps. */
+.card{margin:26px 0}
+.grid{gap:20px}
+
+/* C. Desktop-only rhythm + Arabic breathing room (phones untouched). */
+@media(min-width:561px){
+  /* Results Arabic: diacritics need air; 2.1 -> 2.2 line-height. */
+  .arabic{line-height:2.2}
+  /* Reader Arabic: 2.2 -> 2.35 so harakat/shadda never feel cramped. */
+  .ayah-arabic{line-height:2.35}
+  /* Reader ayah cards: 22px -> 24px padding for a calmer vertical rhythm. */
+  .ayah{padding:24px}
+  /* Audio controls bar: roomier padding and gaps around the player. */
+  .audio-controls{padding:14px 18px;gap:14px}
+  /* Live transcript box: matches the new card rhythm. */
+  .live-transcript{padding:14px 18px}
+}
+
+/* D. Results readability (all viewports; no mobile rule sets these). */
+.translation{line-height:1.85}
+.result-meta{gap:10px}
+.tafseer-src{opacity:.9}
+
+/* E. Heading hierarchy: tighter tracking on h2; card titles get a
+   bottom margin so the gold rule after them has room to breathe. */
+h2{letter-spacing:-.01em}
+.card h2{margin-bottom:14px}
+
+/* F. Focus-ring unification: every text/search/select input now gets the
+   same soft gold focus ring the voice input already had — one focus
+   language across the whole app. */
+.search-wrap input[type=search],
+.filter-row input[type=search],
+.ayah-jump input,
+#qari-select{transition:border-color .25s var(--ease),box-shadow .25s var(--ease)}
+.search-wrap input[type=search]:focus,
+.filter-row input[type=search]:focus,
+.ayah-jump input:focus,
+#qari-select:focus{box-shadow:0 0 0 3px rgb(var(--gold-rgb)/.15)}
+.filter-row input[type=search]:focus{border-color:var(--gold)}
+
+/* G. Touch: hover lift is a desktop affordance — on touch screens a tap
+   used to leave cards lifted (sticky hover). Lift off, border feedback stays. */
+@media (hover:none){
+  .card:hover,.step:hover,.surah-card:hover{transform:none}
+}
+
+/* H. Qari select meets the project's own 44px touch-target rule. */
+#qari-select{min-height:44px}
+
+/* ==========================================================================
+   LEAD INTEGRATION 2026-11-04 — Notes, Collections, Parah, Filter features.
+   Appended AFTER the Impeccable-style polish block above; that block is
+   untouched. Palette tokens only (no recolour): --gold, --card, --line,
+   --line-soft, --ink, --muted. All new markup is mobile-first and reuses
+   .btn / .btn-ghost / .btn-sm / .bookmark-card where the teams already do.
+   ========================================================================== */
+
+/* Notes: gold active state mirrors .bookmark-btn.active. Note cards reuse
+   the bookmark-card look; note text keeps the user's line breaks. */
+.note-btn.active{background:rgb(var(--gold-rgb)/.25);border-color:var(--gold)}
+.note-card{background:rgba(30,16,60,.4);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:12px;text-align:left}
+.note-text{white-space:pre-wrap;word-break:break-word;margin:8px 0}
+.note-card-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+
+/* Notes + Collections dialogs: fixed overlay, centred panel, dark/gold. */
+.note-dialog-overlay,.qs-assign-overlay{position:fixed;inset:0;background:rgba(10,4,25,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:5000}
+.note-dialog,.qs-assign-dialog{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:20px;width:100%;max-width:520px;max-height:85vh;overflow:auto;color:var(--ink)}
+.note-dialog-title{margin:0 0 12px}
+.note-textarea,.qs-assign-input{width:100%;min-height:120px;background:rgba(20,10,40,.6);border:1px solid var(--line-soft);border-radius:var(--r-btn);padding:10px 14px;color:inherit;font:inherit;box-sizing:border-box}
+.qs-assign-input{min-height:44px}
+.note-char-count{text-align:right}
+.note-dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+
+/* Collections: groups stack; ayah cards inside a group reuse the
+   bookmark-grid layout. */
+.qs-collection-group{margin-top:16px}
+.qs-collection-group:first-child{margin-top:0}
+.qs-collection-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.qs-collection-actions{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.qs-collection-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.qs-assign-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.qs-assign-row{display:flex;align-items:center;gap:10px;cursor:pointer}
+
+/* Parah cards: same card language as .surah-card, stacked text lines. */
+.parah-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:14px 16px;text-align:left}
+.parah-num{font-weight:700}
+.parah-range{white-space:normal}
+
+/* Filter: clear button sits beside the input inside .filter-row. */
+.surah-clear-btn{flex-shrink:0}
+/* QA 2026-11-04: .btn{display:inline-block} overrides the UA [hidden] rule,
+   so the Clear button showed even with hidden="" on an empty filter. This
+   attribute rule (higher specificity) restores hidden-while-empty. */
+.surah-clear-btn[hidden]{display:none}
+/* QA 2026-11-04: #collections-grid reuses .bookmark-grid, so the
+   "No collections yet." paragraph became a side-by-side grid item on
+   desktop. Full-width span keeps group sections and notes stacked cleanly. */
+#collections-grid>p{grid-column:1/-1}
