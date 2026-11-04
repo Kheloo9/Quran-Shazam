@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Quran Shazam — Identify Quranic Recitation{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="arabic-verse">اِهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ</div>
+  <h1>Hear a recitation.<br><span class="gold">Know exactly which Ayah it is.</span></h1>
+  <p class="lead">Upload any audio or video — or record live — and Quran Shazam's AI engine transcribes the Arabic recitation and verifies it against the complete Quran, ayah by ayah, with honest confidence labels.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="/verify">🎙️ Verify a Recitation</a>
+    <a class="btn btn-ghost" href="/about">How it works</a>
+  </div>
+  <p class="hint" style="margin-top:14px"><span class="pill ok" id="engine-pill">Checking engine…</span></p>
+</section>
+
+<!-- LEAD INTEGRATION 2026-11-04: Resume card — qs-resume.js fills this when a
+     reading position exists, and leaves it hidden otherwise. -->
+<div id="resume-card" hidden></div>
+
+<section class="grid reveal">
+  <div class="card step"><span class="num">1</span><h3>Record or upload</h3><p class="muted">Use your microphone or drop an audio/video file — MP3, WAV, MP4, WebM and more. Files are processed in memory and deleted immediately.</p></div>
+  <div class="card step"><span class="num">2</span><h3>AI transcribes</h3><p class="muted">A Quran-specialized Arabic speech model converts the recitation to text, handling long recordings in overlapping chunks.</p></div>
+  <div class="card step"><span class="num">3</span><h3>Evidence verified</h3><p class="muted">The transcript is matched against all 6,236 ayat. Every result carries a confidence label — verified, good, possible, or clearly marked as incomplete evidence.</p></div>
+</section>
+
+<section class="card reveal" data-delay="1">
+  <h2>Honest by design</h2>
+  <div class="grid">
+    <div><span class="pill ok">VERIFIED TEXT MATCH</span><p class="muted small">Text, coverage and sequence thresholds all satisfied.</p></div>
+    <div><span class="pill info">GOOD / POSSIBLE MATCH</span><p class="muted small">Strong or partial textual evidence — shown with its exact score.</p></div>
+    <div><span class="pill warn">SEQUENCE RECOVERY</span><p class="muted small">An ayah inferred between two strong matches — always labelled as incomplete audio evidence, never silently promoted.</p></div>
+  </div>
+  <p class="muted small">Quran Shazam is text-evidence based. It does not claim acoustic proof of tajweed, makharij, or voice correctness, and it refuses to guess when the corpus is unhealthy — verification is blocked, not faked.</p>
+</section>
+
+<section class="card reveal" data-delay="2">
+  <h2>Built for trust</h2>
+  <div class="grid">
+    <div class="step"><h3>🔒 Private</h3><p class="muted small">Uploads are never stored. Rate-limited API, hardened headers, no tracking.</p></div>
+    <div class="step"><h3>📜 Canonical corpus</h3><p class="muted small">Pinned, checksummed Quran text validated to 6,236 ayat across 114 surahs on every startup.</p></div>
+    <div class="step"><h3>🌍 Translations</h3><p class="muted small">English and Urdu translations attached to every identified ayah.</p></div>
+  </div>
+  <p><a href="/security">Read the security model →</a></p>
+</section>
+
+<div class="calligraphy-divider reveal" aria-hidden="true"><span>✦</span></div>
+
+<section class="card reveal quran-promo" data-delay="3">
+  <div class="quran-promo-inner">
+    <div>
+      <div class="calligraphy small" aria-hidden="true">﷽</div>
+      <h2>📖 Read the Complete Quran</h2>
+      <p class="muted">All 114 surahs with Arabic text, English &amp; Urdu translations, and tafseer — searchable, verse by verse.</p>
+      <a class="btn btn-primary" href="/quran">Open Quran Reader</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<!-- LEAD INTEGRATION 2026-11-04: Resume — self-renders #resume-card when a
+     reading position exists; harmless when it does not. -->
+<script src="/static/js/qs-resume.js?v={{ asset_v }}"></script>
+<script>
+fetch('/api/health').then(r=>r.json()).then(d=>{
+  const el=document.getElementById('engine-pill');
+  el.textContent=d.ready?'● Engine ready — 6,236 ayat loaded':'● Engine not ready';
+  el.className='pill '+(d.ready?'ok':'bad');
+}).catch(()=>{const el=document.getElementById('engine-pill');el.textContent='● Engine unreachable';el.className='pill bad';});
+</script>
+{% endblock %}

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}Quran Reader — Quran Shazam{% endblock %}
+{% block content %}
+<!-- FYP STUDY GUIDE (FIX2): plain wrapper, NOT .container — base.html already
+     wraps content in <main class="container">, and a nested container doubled
+     the side padding (44px lost on a 360px phone). -->
+<div class="quran-page">
+  <!-- Hero -->
+  <section class="hero" style="text-align:center;padding:48px 20px 32px">
+    <div class="calligraphy" aria-hidden="true">﷽</div>
+    <h1>📖 Quran Reader</h1>
+    <p class="muted" style="max-width:640px;margin:12px auto">
+      The complete Holy Quran with Arabic text, English &amp; Urdu translations,
+      and tafseer — verse by verse.
+    </p>
+    <div class="lang-toggle" role="tablist" aria-label="Translation language">
+      <button class="lang-btn active" data-lang="both" role="tab">English + اردو</button>
+      <button class="lang-btn" data-lang="en" role="tab">English</button>
+      <button class="lang-btn" data-lang="ur" role="tab">اردو</button>
+    </div>
+    <div class="search-wrap">
+      <input id="quran-search" type="search" placeholder="Search translations… (e.g. mercy, patience, صبر)"
+             aria-label="Search translations" autocomplete="off">
+      <div class="search-lang">
+        <label><input type="radio" name="search-lang" value="en" checked> EN</label>
+        <label><input type="radio" name="search-lang" value="ur"> UR</label>
+      </div>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </section>
+
+  <!-- Voice Q&A -->
+  <section class="card voice-qa reveal">
+    <h2>🎙️ Ask about the Quran</h2>
+    <p class="muted">Speak or type a question — e.g. "What is Surah Al-Ikhlas?", "How many ayat in Al-Baqarah?", "What does 2:255 say?"</p>
+    <div id="qa-chips" class="qa-chips"></div>
+    <div class="voice-row">
+      <button id="voice-btn" class="btn btn-primary">🎙️ <span>Speak</span></button>
+      <input id="qa-input" type="text" placeholder="Or type your question…" aria-label="Type your question">
+      <button id="qa-ask" class="btn btn-ghost">Ask</button>
+    </div>
+    <p id="voice-status" class="hint" aria-live="polite"></p>
+    <div id="qa-answer" class="qa-answer" hidden></div>
+    <div id="qa-history" class="qa-history" hidden></div>
+
+    <!-- Word translator: EN<->UR with Quranic context (Issue 5 + 6) -->
+    <div class="translator-block">
+      <h3>🌐 Word Translator <span class="muted small">— ترجمہ</span></h3>
+      <p class="muted small">Type or speak a word — see its translation <em>and</em> which ayat use it.</p>
+      <div class="translator-dir" role="tablist" aria-label="Translation direction">
+        <button class="tr-dir-btn active" data-dir="en2ur" role="tab">English → اردو</button>
+        <button class="tr-dir-btn" data-dir="ur2en" role="tab">اردو → English</button>
+      </div>
+      <div class="voice-row">
+        <button id="tr-voice-btn" class="btn btn-primary">🎙️ <span>Speak</span></button>
+        <input id="tr-input" type="text" placeholder="e.g. mercy … یا صبر" aria-label="Word to translate" autocomplete="off">
+        <button id="tr-go" class="btn btn-ghost">Translate</button>
+      </div>
+      <p id="tr-status" class="hint" aria-live="polite"></p>
+      <div id="tr-result" class="tr-result" hidden></div>
+    </div>
+  </section>
+
+  <!-- Bookmarks -->
+  <section class="card reveal" id="bookmarks-section">
+    <h2>🔖 My Bookmarks</h2>
+    <p class="muted">Tap 🔖 on any ayah to save it here.</p>
+    <div id="bookmark-grid" class="bookmark-grid"></div>
+  </section>
+
+  <!-- LEAD INTEGRATION 2026-11-04: Collections — named bookmark groups.
+       Rendered by qs-collections.js; "Sab" mirrors your bookmarks live. -->
+  <section class="card reveal" id="collections-section">
+    <h2>📂 My Collections</h2>
+    <p class="muted">Group bookmarks into named collections. "Sab" is all your bookmarks.</p>
+    <div id="collections-grid" class="bookmark-grid"></div>
+  </section>
+
+  <!-- LEAD INTEGRATION 2026-11-04: Notes — per-ayah personal notes.
+       Rendered by qs-notes.js; notes live only in this browser. -->
+  <section class="card reveal" id="notes-section">
+    <h2>📝 My Notes</h2>
+    <p class="muted">Tap 📝 on any ayah to write a note for it.</p>
+    <div id="notes-grid" class="bookmark-grid"></div>
+  </section>
+
+  <!-- Reading progress -->
+  <section class="card reveal" id="progress-section">
+    <h2>📊 Reading Progress</h2>
+    <p class="muted" id="progress-text">0 of 114 surahs read</p>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <p class="hint">Open a surah to mark it as read.</p>
+  </section>
+
+  <!-- LEAD INTEGRATION 2026-11-04: Parah navigation — all 30 juz with verified
+       ranges (qs-parah.js, validated against the corpus: 6,236 ayat, no gaps).
+       Tapping a parah opens the Reader at its start. -->
+  <section id="parah-section">
+    <h2 style="text-align:center;margin:8px 0 20px">Parah <span class="muted small">(30 Juz)</span></h2>
+    <div id="parah-grid" class="surah-grid"></div>
+  </section>
+
+  <!-- Surah grid -->
+  <section id="surah-grid-section">
+    <h2 style="text-align:center;margin:8px 0 20px">Surahs <span class="muted small">(114)</span></h2>
+    <div class="filter-row">
+      <input id="surah-filter" type="search" placeholder="Filter surahs… (name or number)" aria-label="Filter surahs">
+      <div class="chip-row">
+        <button class="chip active" data-rev="all">All</button>
+        <button class="chip" data-rev="Makki">Makki</button>
+        <button class="chip" data-rev="Madani">Madani</button>
+      </div>
+    </div>
+    <!-- LEAD INTEGRATION 2026-11-04: Filter result count (qs-filter.js).
+         Hidden until the surah list loads successfully — before that the grid
+         holds a loading paragraph, and a "0" count would mislead. -->
+    <p id="surah-count" class="muted small" hidden style="text-align:center;margin:-8px 0 16px"></p>
+    <div id="surah-grid" class="surah-grid"><p class="muted" style="text-align:center">Loading surahs…</p></div>
+  </section>
+
+  <!-- Reader -->
+  <section id="reader" class="reader" hidden>
+    <button id="reader-back" class="btn btn-ghost">← All Surahs</button>
+    <div class="reader-head">
+      <!-- TEAM 1 (2026-10-22, R-2): Surah At-Tawbah (9) has NO Bismillah —
+           quran.js openSurah() hides this when the surah is 9. -->
+      <div class="calligraphy small" id="reader-basmala" aria-hidden="true">﷽</div>
+      <h2 id="reader-title"></h2>
+      <p id="reader-meta" class="muted"></p>
+    </div>
+    <div class="reader-controls">
+      <label class="toggle"><input type="checkbox" id="toggle-tafseer"> Show tafseer</label>
+      <label class="toggle"><input type="checkbox" id="toggle-translit"> Transliteration</label>
+      <label class="toggle"><input type="checkbox" id="toggle-hifz"> 📖 Hifz mode</label>
+      <div class="font-size">
+        <button id="font-dec" aria-label="Smaller text">A−</button>
+        <button id="font-inc" aria-label="Larger text">A+</button>
+      </div>
+      <!-- R-3 (DESIGN AUDIT 2026-10-22): ayah jump for long surahs — reaching
+           2:255 by scrolling ~255 cards on a phone is unusable. Type the ayah
+           number, press Go (or Enter), the card scrolls into view + flashes. -->
+      <div class="ayah-jump">
+        <label for="ayah-jump-input">Ayah ▸</label>
+        <input id="ayah-jump-input" type="number" min="1" inputmode="numeric"
+               aria-label="Ayah number — ayah number likhein" placeholder="255">
+        <button id="ayah-jump-go" class="btn btn-ghost btn-sm">Go</button>
+      </div>
+    </div>
+    <div class="audio-controls">
+      <button id="play-surah-btn" class="btn btn-primary">▶️ Play Full Surah</button>
+      <!-- Custom Qari picker (unique design, replaces native select) -->
+      <button id="qari-picker-btn" class="qari-picker-btn" aria-haspopup="dialog" aria-label="Choose reciter">
+        <span class="qari-picker-icon">🎙️</span>
+        <span class="qari-picker-text"><span class="qari-picker-label">Qari</span><span id="qari-picker-name">Mishary Rashid Alafasy</span></span>
+        <span class="qari-picker-chev">▾</span>
+      </button>
+    </div>
+    <!-- R-4 (DESIGN AUDIT 2026-10-22): thin playback-progress line under the
+         audio controls — "Ayah X/286" so an interrupted surah never loses
+         its position silently. Shown only while the queue is active. -->
+    <div id="surah-progress" class="surah-progress" hidden>
+      <p id="surah-progress-text" class="muted small"></p>
+      <div class="surah-progress-track"><div id="surah-progress-fill" class="surah-progress-fill"></div></div>
+    </div>
+    <!-- Qari picker bottom-sheet -->
+    <div id="qari-sheet-backdrop" class="qari-sheet-backdrop" hidden></div>
+    <div id="qari-sheet" class="qari-sheet" role="dialog" aria-modal="true" aria-label="Choose reciter" hidden>
+      <div class="qari-sheet-handle"></div>
+      <h3 class="qari-sheet-title">🎙️ Choose your Qari</h3>
+      <p class="qari-sheet-sub muted">Tilawat ki awaz muntakhib karein</p>
+      <div id="qari-cards" class="qari-cards"></div>
+      <button id="qari-sheet-close" class="btn btn-ghost qari-sheet-close">Band karein</button>
+    </div>
+    <div id="ayah-list"></div>
+    <div class="reader-nav">
+      <button id="prev-surah" class="btn btn-ghost">← Previous</button>
+      <button id="next-surah" class="btn btn-ghost">Next →</button>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/quran.js?v={{ asset_v }}"></script>
+<script src="/static/js/voice_qa.js?v={{ asset_v }}"></script>
+<script src="/static/js/bookmarks.js?v={{ asset_v }}"></script>
+<!-- LEAD INTEGRATION 2026-11-04: feature modules, one file per team, loaded
+     after quran.js so window.qsOpenSurah already exists. -->
+<script src="/static/js/qs-resume.js?v={{ asset_v }}"></script>
+<script src="/static/js/qs-notes.js?v={{ asset_v }}"></script>
+<script src="/static/js/qs-collections.js?v={{ asset_v }}"></script>
+<script src="/static/js/qs-parah.js?v={{ asset_v }}"></script>
+<script src="/static/js/qs-filter.js?v={{ asset_v }}"></script>
+<script>
+/* Lead-owned wiring: render the new sections once (each module guards a
+   missing container), and start the filter enhancement. Every call is
+   guarded so a missing module can never break the Reader. */
+(function () {
+  if (window.qsFilter) window.qsFilter.init();
+  var notes = document.getElementById('notes-grid');
+  if (notes && window.qsNotes) window.qsNotes.renderNotesList(notes);
+  var colls = document.getElementById('collections-grid');
+  if (colls && window.qsCollections) window.qsCollections.renderCollections(colls);
+  var parah = document.getElementById('parah-grid');
+  if (parah && window.qsParah) window.qsParah.renderParahList(parah);
+})();
+</script>
+{% endblock %}
