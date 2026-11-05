@@ -1,7 +1,8 @@
 /* qs-resume.js — Resume / Continue Reading for Quran Shazam.
  *
  * Purpose: remember the user's last reading position (surah + ayah) in the
- * browser only, and show a "Continue reading" card on the home page.
+ * browser only, and show a "Continue reading" card on the Quran page,
+ * directly above the Surah list.
  *
  * Privacy / project rules honoured here:
  * - All data stays in the browser's localStorage only, never server-side.
@@ -13,9 +14,8 @@
  * - Every localStorage JSON parse / set is wrapped in try/catch, so corrupt
  *   data, a full store, or a browser that blocks storage can never crash
  *   the page. Bad data simply means "no position".
- * - Safe to load on BOTH / and /quran: on /quran (or anywhere else) it
- *   only self-renders if an element with id "resume-card" exists, and
- *   otherwise does nothing.
+ * - Loaded on /quran, where it only self-renders if an element with id
+ *   "resume-card" exists, and otherwise does nothing.
  *
  * Storage:
  *   localStorage key: 'qs-last-read'
@@ -205,10 +205,10 @@
   };
 
   /**
-   * Self-render on the home page: once the DOM is ready, if an element
+   * Self-render on the Quran page: once the DOM is ready, if an element
    * with id "resume-card" exists, render into it. Every step is guarded:
    * - If the document is already past DOMContentLoaded, render at once.
-   * - If #resume-card does not exist (e.g. on /quran), do nothing.
+   * - If #resume-card does not exist, do nothing.
    * - renderResumeCard itself also guards a missing container, so a
    *   race where the element is removed cannot crash the page.
    */

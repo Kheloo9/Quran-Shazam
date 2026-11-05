@@ -275,7 +275,7 @@ pre.dump{background:#0d0619;border:1px solid var(--line);border-radius:var(--r-c
   .arabic{font-size:1.6rem;line-height:2}
   .verify-hero{padding:40px 18px 30px}
 .surah-grid{grid-template-columns:1fr}.calligraphy{font-size:2.4rem}.search-wrap{flex-direction:column}.ayah{padding:16px}
-.voice-row{flex-direction:column;align-items:stretch}.voice-row input[type=text]{min-width:0}.qa-card{padding:16px}
+.voice-row{flex-direction:column;align-items:stretch}.voice-row input[type=text]{min-width:0}
   .btn{padding:13px 20px;font-size:var(--fs-md)}
   .btn-sm{padding:11px 16px;font-size:var(--fs-md);min-height:44px}
   .btn-primary.pulse{min-height:52px} /* the big Verify button shouts AND is tappable */
@@ -408,6 +408,19 @@ pre.dump{background:#0d0619;border:1px solid var(--line);border-radius:var(--r-c
 .quran-promo{text-align:center;background:linear-gradient(135deg,rgba(60,25,110,.5),rgba(30,12,60,.5));border:1px solid rgb(var(--gold-rgb)/.3)}
 .quran-promo-inner{max-width:560px;margin:0 auto;padding:12px}
 .quran-promo .btn{margin-top:12px}
+/* 2026-11-04: promo heading must centre like the rest of the card. The
+   generic .card h2 is display:flex with a trailing ::after divider line,
+   which ignores text-align:center and pins the heading left — glaring
+   on wide desktop cards. Centre it and drop the divider here only;
+   other cards keep their left heading + divider. */
+.card.quran-promo h2{justify-content:center}
+.card.quran-promo h2::after{display:none}
+
+/* SPEAK-VERIFY PORT (2026-11-04, from v116 style.css ~line 829):
+   interim (not yet committed) speech in the speak-verify box only —
+   faint + italic, so it can never be mistaken for final text. Finals
+   keep their normal style. */
+.speak-verify-interim{opacity:.55;font-style:italic}
 
 /* ---------- file upload UX: info + drag feedback ---------- */
 .file-info{display:none;margin-top:10px;padding:10px 14px;background:rgba(30,16,60,.4);border:1px solid var(--line-soft);border-radius:var(--r-card);font-size:var(--fs-sm)}
@@ -427,44 +440,9 @@ pre.dump{background:#0d0619;border:1px solid var(--line);border-radius:var(--r-c
 .tafseer-body[data-tbody="ur"] p{font-family:var(--urdu);line-height:2.1}
 .tafseer-src{margin-top:10px;font-size:var(--fs-xs);color:var(--muted);font-style:italic;opacity:.8} /* S-8: triple !important dropped — .tafseer-src (0,1,0) already beats any element selector naturally */
 
-/* ---------- voice Q&A ---------- */
-.voice-qa{margin:24px 0}
 .voice-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
 .voice-row input[type=text]{flex:1;min-width:200px;background:rgba(20,10,40,.6);border:1px solid var(--line-soft);border-radius:var(--r-btn);padding:11px 16px;color:inherit;font:inherit}
 .voice-row input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgb(var(--gold-rgb)/.15)}
-#voice-btn{position:relative;overflow:hidden}
-#voice-btn.listening{background:#a33;border-color:#a33}
-#voice-btn .pulse-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#fff;margin-right:6px;animation:qs-pulse-dot 1s infinite}
-@keyframes qs-pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.qa-chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
-.qa-chip{display:inline-flex;align-items:center;min-height:44px;background:rgb(var(--gold-rgb)/.08);border:1px solid rgb(var(--gold-rgb)/.3);color:var(--gold-soft);border-radius:var(--r-pill);padding:6px 14px;font-size:var(--fs-xs);cursor:pointer;transition:all .2s;font-family:inherit} /* A-9: 44px min-height — was ~30px, mis-taps fired TTS in the wrong language */
-.qa-chip:hover{background:rgb(var(--gold-rgb)/.18);transform:translateY(-1px)}
-.qa-answer{margin-top:16px}
-.qa-q{font-weight:600;color:var(--gold);margin-bottom:12px;font-size:var(--fs-md)}
-.qa-card{background:linear-gradient(135deg,rgba(30,16,60,.5),rgba(20,10,40,.5));border:1px solid rgb(var(--gold-rgb)/.2);border-radius:var(--r-card);padding:20px;opacity:0;transform:translateY(12px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
-.qa-card.qa-in{opacity:1;transform:none}
-.qa-card h3{margin:0 0 12px;color:var(--gold-soft)} /* S-9: size now comes from the base h3 rule (1.15rem — identical) */
-.qa-card .arabic{font-size:1.7rem;line-height:2.2;margin:12px 0}
-.qa-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.qa-hit{background:rgba(30,16,60,.35);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:14px;margin:10px 0;transition:border-color .2s}
-.qa-hit:hover{border-color:rgb(var(--gold-rgb)/.35)}
-.qa-hit .arabic.small{font-size:1.2rem}
-.qa-hit strong{color:var(--gold)}
-/* TEAM 4 (2026-10-22, RTL audit): the translation <p> is Urdu when the
-   backend falls back to Urdu search — voice_qa.js then sets dir="rtl" on it.
-   This rule only fires in that case (English hits are untouched on every
-   viewport): right-align so wrapped Urdu lines don't go ragged. */
-.qa-hit .muted[dir="rtl"]{text-align:right}
-.qa-loading{display:flex;align-items:center;gap:12px;padding:20px;color:var(--muted)}
-.qa-spinner{width:22px;height:22px;border:3px solid rgb(var(--gold-rgb)/.2);border-top-color:var(--gold);border-radius:50%;animation:qs-spin .8s linear infinite}
-@keyframes qs-spin{to{transform:rotate(360deg)}}
-.qa-error{border-color:rgba(192,86,93,.4)}
-.qa-suggest{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.qa-history{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-soft)}
-.qa-hist-title{font-size:var(--fs-xs);color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em}
-.qa-hist-item{display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--muted);font-size:var(--fs-sm);padding:6px 0;cursor:pointer;font-family:inherit}
-.qa-hist-item:hover{color:var(--gold-soft)}
-.qa-hist-item::before{content:"↩ ";opacity:.6}
 /* S-12: rules moved into the max-width:560px (single block) above */
 
 /* ---------- v7: audio, bookmark, hifz, transliteration ---------- */
@@ -674,7 +652,7 @@ pre.dump{background:#0d0619;border:1px solid var(--line);border-radius:var(--r-c
 img,canvas,audio,video{max-width:100%}
 .dz-wave canvas{width:100%!important;height:auto}
 .search-wrap input[type=search]{min-width:0} /* flex item may overflow otherwise */
-.card,.ayah,.qa-card,.coach-card{overflow-wrap:break-word}
+.card,.ayah,.coach-card{overflow-wrap:break-word}
 pre,code{white-space:pre-wrap;word-break:break-word}
 
 /* ---------- 7. Coach cards: stack nicely on phones ---------- */
@@ -748,7 +726,7 @@ body{position:relative}
 main.container{min-width:0} /* flex/grid blowout guard on the content column */
 .quran-page{min-width:0}
 /* every card and grid child can shrink; long words (URLs, Arabic) break */
-.card,.ayah,.qa-card,.coach-card,.surah-card,.dua-card,.step,.pill,
+.card,.ayah,.coach-card,.surah-card,.dua-card,.step,.pill,
 .grid>*,.surah-grid>*,.bookmark-grid>*{min-width:0;max-width:100%}
 img,video,canvas,audio,iframe{max-width:100%}
 /* S-7 (2026-10-22): table{display:block} removed — no <table> exists in any template. */
@@ -902,3 +880,13 @@ h2{letter-spacing:-.01em}
    "No collections yet." paragraph became a side-by-side grid item on
    desktop. Full-width span keeps group sections and notes stacked cleanly. */
 #collections-grid>p{grid-column:1/-1}
+
+/* LEAD 2026-11-05: Parah button + dedicated Parah view (button idea).
+   The old full-width 30-card #parah-section grid is gone; a single
+   button opens the picker, and a tap opens the whole juz in
+   #parah-view. Dark/gold theme unchanged; all new rules only. */
+.parah-btn-row{text-align:center;margin:0 0 16px}
+.parah-surah-head{text-align:center;margin:28px 0 12px;padding-top:20px;border-top:1px solid rgb(var(--gold-rgb)/.35)}
+.parah-surah-head:first-child{margin-top:8px;padding-top:0;border-top:none}
+.parah-surah-head h3{margin:6px 0 4px}
+.parah-ayah-ref{display:inline-flex;align-items:center;justify-content:center;min-width:52px;height:34px;padding:0 10px;border:1.5px solid var(--gold);border-radius:999px;background:rgb(var(--gold-rgb)/.15);color:var(--gold);font-size:var(--fs-sm);font-weight:700;margin-right:8px;white-space:nowrap}

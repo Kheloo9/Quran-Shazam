@@ -29,21 +29,14 @@
     <div id="search-results" class="search-results" hidden></div>
   </section>
 
-  <!-- Voice Q&A -->
-  <section class="card voice-qa reveal">
-    <h2>🎙️ Ask about the Quran</h2>
-    <p class="muted">Speak or type a question — e.g. "What is Surah Al-Ikhlas?", "How many ayat in Al-Baqarah?", "What does 2:255 say?"</p>
-    <div id="qa-chips" class="qa-chips"></div>
-    <div class="voice-row">
-      <button id="voice-btn" class="btn btn-primary">🎙️ <span>Speak</span></button>
-      <input id="qa-input" type="text" placeholder="Or type your question…" aria-label="Type your question">
-      <button id="qa-ask" class="btn btn-ghost">Ask</button>
-    </div>
-    <p id="voice-status" class="hint" aria-live="polite"></p>
-    <div id="qa-answer" class="qa-answer" hidden></div>
-    <div id="qa-history" class="qa-history" hidden></div>
+  <!-- Resume / Continue reading card — moved 2026-11-04: home page se
+       Quran page par, hero ke foran baad (user order 2026-11-04 23:03).
+       qs-resume.js (loaded below) fills this when a reading position
+       exists, and leaves it hidden otherwise. -->
+  <div id="resume-card" hidden></div>
 
-    <!-- Word translator: EN<->UR with Quranic context (Issue 5 + 6) -->
+  <!-- Word translator: EN<->UR with Quranic context (Issue 5 + 6) -->
+  <section class="card reveal">
     <div class="translator-block">
       <h3>🌐 Word Translator <span class="muted small">— ترجمہ</span></h3>
       <p class="muted small">Type or speak a word — see its translation <em>and</em> which ayat use it.</p>
@@ -92,17 +85,15 @@
     <p class="hint">Open a surah to mark it as read.</p>
   </section>
 
-  <!-- LEAD INTEGRATION 2026-11-04: Parah navigation — all 30 juz with verified
-       ranges (qs-parah.js, validated against the corpus: 6,236 ayat, no gaps).
-       Tapping a parah opens the Reader at its start. -->
-  <section id="parah-section">
-    <h2 style="text-align:center;margin:8px 0 20px">Parah <span class="muted small">(30 Juz)</span></h2>
-    <div id="parah-grid" class="surah-grid"></div>
-  </section>
-
   <!-- Surah grid -->
   <section id="surah-grid-section">
     <h2 style="text-align:center;margin:8px 0 20px">Surahs <span class="muted small">(114)</span></h2>
+    <!-- LEAD 2026-11-05: Parah button (button idea, user order). The old
+         full-width 30-card #parah-section grid is gone; one button opens
+         the picker, and a tap opens the WHOLE juz in #parah-view below. -->
+    <div class="parah-btn-row">
+      <button id="parah-open-btn" class="btn btn-ghost" type="button">📖 Parah <span class="muted small">(30 Juz)</span></button>
+    </div>
     <div class="filter-row">
       <input id="surah-filter" type="search" placeholder="Filter surahs… (name or number)" aria-label="Filter surahs">
       <div class="chip-row">
@@ -116,6 +107,38 @@
          holds a loading paragraph, and a "0" count would mislead. -->
     <p id="surah-count" class="muted small" hidden style="text-align:center;margin:-8px 0 16px"></p>
     <div id="surah-grid" class="surah-grid"><p class="muted" style="text-align:center">Loading surahs…</p></div>
+  </section>
+
+  <!-- LEAD 2026-11-05: Parah picker — lists all 30 juz with verified
+       ranges (qs-parah.js). Rendered lazily on first open, so the
+       surah-name fetch only runs when the user actually taps Parah. -->
+  <section id="parah-picker" hidden>
+    <button id="parah-picker-back" class="btn btn-ghost">← Surahs</button>
+    <h2 style="text-align:center;margin:8px 0 20px">Parah <span class="muted small">(30 Juz)</span></h2>
+    <div id="parah-picker-grid" class="surah-grid"></div>
+  </section>
+
+  <!-- LEAD 2026-11-05: Dedicated Parah view — renders the WHOLE juz:
+       every ayah in order, a surah header at each boundary, Arabic +
+       EN/UR translations, per-ayah audio / bookmark / note / tafseer.
+       This is the fix for the old jump-to-surah behaviour. -->
+  <section id="parah-view" hidden>
+    <button id="parah-back" class="btn btn-ghost">← Surahs</button>
+    <div class="reader-head">
+      <h2 id="parah-title"></h2>
+      <p id="parah-meta" class="muted"></p>
+    </div>
+    <!-- LEAD 2026-11-05: "Play Full Parah" — continuous Qari tilawat of
+         the whole juz (same flow as the Reader's "Play Full Surah").
+         Qari audio only; never AI TTS for ayat. -->
+    <div class="audio-controls">
+      <button id="play-parah-btn" class="btn btn-primary">▶️ Play Full Parah</button>
+    </div>
+    <div id="parah-progress" class="surah-progress" hidden>
+      <p id="parah-progress-text" class="muted small"></p>
+      <div class="surah-progress-track"><div id="parah-progress-fill" class="surah-progress-fill"></div></div>
+    </div>
+    <div id="parah-ayah-list"></div>
   </section>
 
   <!-- Reader -->
@@ -181,7 +204,7 @@
 {% endblock %}
 {% block scripts %}
 <script src="/static/js/quran.js?v={{ asset_v }}"></script>
-<script src="/static/js/voice_qa.js?v={{ asset_v }}"></script>
+<script src="/static/js/translator.js?v={{ asset_v }}"></script>
 <script src="/static/js/bookmarks.js?v={{ asset_v }}"></script>
 <!-- LEAD INTEGRATION 2026-11-04: feature modules, one file per team, loaded
      after quran.js so window.qsOpenSurah already exists. -->
@@ -200,8 +223,7 @@
   if (notes && window.qsNotes) window.qsNotes.renderNotesList(notes);
   var colls = document.getElementById('collections-grid');
   if (colls && window.qsCollections) window.qsCollections.renderCollections(colls);
-  var parah = document.getElementById('parah-grid');
-  if (parah && window.qsParah) window.qsParah.renderParahList(parah);
+  if (window.qsParah && typeof window.qsParah.init === 'function') window.qsParah.init();
 })();
 </script>
 {% endblock %}

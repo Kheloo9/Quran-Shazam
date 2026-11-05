@@ -12,10 +12,6 @@
   <p class="hint" style="margin-top:14px"><span class="pill ok" id="engine-pill">Checking engine…</span></p>
 </section>
 
-<!-- LEAD INTEGRATION 2026-11-04: Resume card — qs-resume.js fills this when a
-     reading position exists, and leaves it hidden otherwise. -->
-<div id="resume-card" hidden></div>
-
 <section class="grid reveal">
   <div class="card step"><span class="num">1</span><h3>Record or upload</h3><p class="muted">Use your microphone or drop an audio/video file — MP3, WAV, MP4, WebM and more. Files are processed in memory and deleted immediately.</p></div>
   <div class="card step"><span class="num">2</span><h3>AI transcribes</h3><p class="muted">A Quran-specialized Arabic speech model converts the recitation to text, handling long recordings in overlapping chunks.</p></div>
@@ -56,9 +52,6 @@
 </section>
 {% endblock %}
 {% block scripts %}
-<!-- LEAD INTEGRATION 2026-11-04: Resume — self-renders #resume-card when a
-     reading position exists; harmless when it does not. -->
-<script src="/static/js/qs-resume.js?v={{ asset_v }}"></script>
 <script>
 fetch('/api/health').then(r=>r.json()).then(d=>{
   const el=document.getElementById('engine-pill');
