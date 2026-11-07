@@ -294,11 +294,11 @@
     var cardsEl = groupEl.querySelector('.qs-collection-cards');
     if (!cardsEl) return;
     if (!keys.length) {
-      cardsEl.innerHTML = '<p class="muted small">'
-        + esc(isSab
-          ? 'No bookmarks yet. Tap the bookmark button on any ayah to save it here.'
-          : 'No ayahs in this collection yet.')
-        + '</p>';
+      // F7 (Hallmark audit 2026-11-06): the "Sab" empty line duplicated the
+      // Bookmarks card's message directly above this card — the "No
+      // collections yet…" line below already covers the empty state.
+      if (isSab) return;
+      cardsEl.innerHTML = '<p class="muted small">' + esc('No ayahs in this collection yet.') + '</p>';
       return;
     }
     cardsEl.innerHTML = '<p class="muted small">Loading…</p>';

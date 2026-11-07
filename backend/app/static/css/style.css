@@ -96,6 +96,12 @@ h3{font-size:var(--fs-lg);line-height:1.35}
 .hero h1{font-size:clamp(2.2rem,5vw,3.4rem);margin:.2em 0;line-height:1.15;letter-spacing:-.01em}
 .hero h1 .gold{background:linear-gradient(120deg,var(--gold-soft),var(--gold) 60%,#b98a3e);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p.lead{font-size:var(--fs-lg);color:var(--muted);max-width:640px;margin:0 auto 26px}
+/* F2 (Hallmark audit 2026-11-06): Duas + About used .page-hero but the
+   class had no rule — their heroes rendered as unstyled default headings.
+   Same hero language as .hero above (centered, muted subtitle). */
+.page-hero{text-align:center;padding:56px 0 28px}
+.page-hero h1{font-size:clamp(2rem,4.5vw,2.8rem);margin:.2em 0;line-height:1.15;letter-spacing:-.01em}
+.page-hero p{color:var(--muted);max-width:640px;margin:0 auto}
 .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .hero .arabic-verse{
   font-family:var(--arabic);font-size:2.1rem;margin-bottom:10px;
@@ -265,6 +271,11 @@ pre.dump{background:#0d0619;border:1px solid var(--line);border-radius:var(--r-c
      .sticky-verify-visible on body alongside the bar's .show. */
   body.sticky-verify-visible{padding-bottom:84px}
 }
+/* F1 (Hallmark audit 2026-11-06): this base rule MUST stay above the
+   max-width:560px block — same specificity, so if it sits after the block
+   it defeats the mobile 2.2rem rule and the Reader Bismillah clips on
+   phones (measured 51.2px, ~79px overflow at 390px). Do not move it down. */
+.calligraphy{font-size:3.2rem;color:var(--gold);opacity:.9;line-height:1.4;margin-bottom:8px;font-family:"Amiri","Scheherazade New",serif}
 @media(max-width:560px){
   .nav{padding:10px 14px;flex-wrap:wrap;row-gap:10px}
   .brand{font-size:var(--fs-md)}
@@ -325,7 +336,6 @@ pre.dump{background:#0d0619;border:1px solid var(--line);border-radius:var(--r-c
 /* S-12: rules moved into the reduced-motion (single block) above */
 
 /* ---------- Quran Reader ---------- */
-.calligraphy{font-size:3.2rem;color:var(--gold);opacity:.9;line-height:1.4;margin-bottom:8px;font-family:"Amiri","Scheherazade New",serif}
 .calligraphy.small{font-size:2rem}
 .lang-toggle{display:flex;gap:8px;justify-content:center;margin:20px 0;flex-wrap:wrap}
 .lang-btn{background:rgba(30,16,60,.5);border:1px solid var(--line-soft);color:inherit;border-radius:var(--r-pill);padding:9px 20px;cursor:pointer;font:inherit;transition:all .2s}
@@ -415,12 +425,6 @@ pre.dump{background:#0d0619;border:1px solid var(--line);border-radius:var(--r-c
    other cards keep their left heading + divider. */
 .card.quran-promo h2{justify-content:center}
 .card.quran-promo h2::after{display:none}
-
-/* SPEAK-VERIFY PORT (2026-11-04, from v116 style.css ~line 829):
-   interim (not yet committed) speech in the speak-verify box only —
-   faint + italic, so it can never be mistaken for final text. Finals
-   keep their normal style. */
-.speak-verify-interim{opacity:.55;font-style:italic}
 
 /* ---------- file upload UX: info + drag feedback ---------- */
 .file-info{display:none;margin-top:10px;padding:10px 14px;background:rgba(30,16,60,.4);border:1px solid var(--line-soft);border-radius:var(--r-card);font-size:var(--fs-sm)}
